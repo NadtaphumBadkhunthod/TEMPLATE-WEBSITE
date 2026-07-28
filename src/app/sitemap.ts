@@ -58,13 +58,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.6,
       });
     }
-    if (settings.modules.pricing) {
-      entries.push({
-        url: `${base}/${locale}/pricing`,
-        changeFrequency: "monthly",
-        priority: 0.7,
-      });
-    }
   }
 
   for (const project of projects) {

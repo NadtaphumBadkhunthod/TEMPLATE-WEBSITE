@@ -36,12 +36,6 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
       <Panel title="Modules" hint="Optional parts of the site">
         <div className="space-y-3">
           <Toggle
-            name="module_pricing"
-            defaultChecked={settings.modules.pricing}
-            label="Pricing page"
-            hint="Adds /pricing and shows prices on project pages."
-          />
-          <Toggle
             name="module_quote"
             defaultChecked={settings.modules.quote}
             label="Request a quote"

@@ -24,14 +24,6 @@ enum ProjectStatus {
   archived
 }
 
-enum PriceDisplayMode {
-  hidden
-  exact
-  from
-  range
-  on_request
-}
-
 enum MediaKind {
   image
   document
@@ -102,7 +94,6 @@ model Locale {
   mediaTranslations           MediaTranslation[]
   fieldDefinitionTranslations FieldDefinitionTranslation[]
   formFieldTranslations       FormFieldTranslation[]
-  pricingPlanTranslations     PricingPlanTranslation[]
   pageTranslations            PageTranslation[]
   quoteRequests               QuoteRequest[]
 
@@ -139,12 +130,6 @@ model Project {
   sortOrder   Int       @default(0)
   publishedAt DateTime?
   isFeatured  Boolean   @default(false)
-
-  priceDisplayMode PriceDisplayMode @default(hidden)
-  priceAmount      Decimal?         @db.Decimal(14, 2)
-  priceAmountMax   Decimal?         @db.Decimal(14, 2)
-  priceCurrency    String?          @db.VarChar(3)
-  priceUnit        String?
 
   coverMediaId String?
   coverMedia   MediaAsset? @relation("ProjectCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
@@ -483,47 +468,6 @@ model QuoteRequestNote {
 
   @@index([quoteRequestId, createdAt])
   @@map("quote_request_notes")
-}
-
-// ---------------------------------------------------------------- pricing module
-
-model PricingPlan {
-  id String @id @default(uuid())
-
-  priceDisplayMode PriceDisplayMode @default(exact)
-  priceAmount      Decimal?         @db.Decimal(14, 2)
-  priceAmountMax   Decimal?         @db.Decimal(14, 2)
-  priceCurrency    String?          @db.VarChar(3)
-  billingPeriod    String?
-
-  isFeatured Boolean @default(false)
-  sortOrder  Int     @default(0)
-  isActive   Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  translations PricingPlanTranslation[]
-
-  @@map("pricing_plans")
-}
-
-model PricingPlanTranslation {
-  id            String      @id @default(uuid())
-  pricingPlanId String
-  pricingPlan   PricingPlan @relation(fields: [pricingPlanId], references: [id], onDelete: Cascade)
-  locale        String
-  localeRef     Locale      @relation(fields: [locale], references: [code])
-
-  name    String
-  tagline String?
-  /// [{ text, included }]
-  features Json    @default("[]")
-  ctaLabel String?
-  ctaUrl   String?
-
-  @@unique([pricingPlanId, locale])
-  @@map("pricing_plan_translations")
 }
 
 // ---------------------------------------------------------------- pages & settings

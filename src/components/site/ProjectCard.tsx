@@ -70,12 +70,6 @@ export function ProjectCard({
             {project.summary}
           </p>
         )}
-
-        {project.price && (
-          <p className="mt-4 text-sm font-semibold text-ink-900">
-            {project.price.label}
-          </p>
-        )}
       </div>
     </article>
   );

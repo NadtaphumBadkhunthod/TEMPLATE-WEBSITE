@@ -14,9 +14,6 @@ export async function SiteHeader({ locale }: { locale: Locale }) {
   const links = [
     { href: `/${locale}`, label: t("nav.home") },
     { href: `/${locale}/projects`, label: t("nav.projects") },
-    ...(settings.modules.pricing
-      ? [{ href: `/${locale}/pricing`, label: t("nav.pricing") }]
-      : []),
   ];
 
   return (

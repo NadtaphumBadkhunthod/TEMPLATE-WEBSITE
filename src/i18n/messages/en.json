@@ -22,7 +22,6 @@
   "nav": {
     "home": "Home",
     "projects": "Projects",
-    "pricing": "Pricing",
     "quote": "Request a Quote",
     "menu": "Menu",
     "language": "Language"
@@ -60,10 +59,8 @@
     "specifications": "Specifications",
     "attachments": "Documents & downloads",
     "gallery": "Gallery",
-    "price": "Price",
-    "priceOnRequest": "Price on request",
-    "priceFrom": "From {amount}",
-    "priceRange": "{min} – {max}",
+    "enquiry": "Interested in this project?",
+    "enquiryBody": "Get in touch and our team will follow up with details.",
     "requestQuote": "Request a quote",
     "related": "Related projects",
     "backToList": "Back to projects",
@@ -71,16 +68,6 @@
     "openLink": "Open link",
     "categories": "Categories",
     "notTranslated": "This project is not available in English yet."
-  },
-  "pricing": {
-    "title": "Pricing",
-    "subtitle": "Transparent packages for every stage",
-    "mostPopular": "Most popular",
-    "contactUs": "Contact us",
-    "perMonth": "/month",
-    "perYear": "/year",
-    "oneTime": "one-time",
-    "empty": "Pricing information is being prepared."
   },
   "quote": {
     "title": "Request a Quote",
@@ -118,7 +105,6 @@
     "categories": "Categories",
     "media": "Media",
     "quotes": "Quote requests",
-    "pricing": "Pricing",
     "fields": "Custom fields",
     "forms": "Forms",
     "settings": "Settings",

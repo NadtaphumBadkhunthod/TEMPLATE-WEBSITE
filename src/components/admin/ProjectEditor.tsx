@@ -41,11 +41,6 @@ export type ProjectDraft = {
   status: "draft" | "published" | "archived";
   isFeatured: boolean;
   sortOrder: number;
-  priceDisplayMode: "hidden" | "exact" | "from" | "range" | "on_request";
-  priceAmount: string;
-  priceAmountMax: string;
-  priceCurrency: string;
-  priceUnit: string;
   coverMediaId: string | null;
   categoryIds: string[];
   primaryCategoryId: string | null;
@@ -54,14 +49,6 @@ export type ProjectDraft = {
   attachments: { mediaId: string; label: string }[];
   translations: Record<string, TranslationDraft>;
 };
-
-const PRICE_MODES = [
-  { value: "hidden", hint: "Nothing shown on the site" },
-  { value: "exact", hint: "Show the exact amount" },
-  { value: "from", hint: 'Show "From ฿X"' },
-  { value: "range", hint: "Show a min–max range" },
-  { value: "on_request", hint: 'Show "Price on request"' },
-] as const;
 
 export function ProjectEditor({
   initial,
@@ -372,74 +359,6 @@ export function ProjectEditor({
         </div>
 
         <div className="space-y-6">
-          <Panel title="Pricing">
-            <Labelled label="Display">
-              <select
-                value={draft.priceDisplayMode}
-                onChange={(event) =>
-                  patch({
-                    priceDisplayMode: event.target
-                      .value as ProjectDraft["priceDisplayMode"],
-                  })
-                }
-                className={inputClass}
-              >
-                {PRICE_MODES.map((mode) => (
-                  <option key={mode.value} value={mode.value}>
-                    {mode.value}
-                  </option>
-                ))}
-              </select>
-              <p className="mt-1 text-xs text-ink-500">
-                {PRICE_MODES.find((m) => m.value === draft.priceDisplayMode)?.hint}
-              </p>
-            </Labelled>
-
-            {["exact", "from", "range"].includes(draft.priceDisplayMode) && (
-              <div className="mt-4 space-y-3">
-                <div className="flex gap-2">
-                  <Labelled label="Amount" className="flex-1">
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={draft.priceAmount}
-                      onChange={(event) =>
-                        patch({ priceAmount: event.target.value })
-                      }
-                      className={inputClass}
-                    />
-                  </Labelled>
-                  {draft.priceDisplayMode === "range" && (
-                    <Labelled label="Max" className="flex-1">
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={draft.priceAmountMax}
-                        onChange={(event) =>
-                          patch({ priceAmountMax: event.target.value })
-                        }
-                        className={inputClass}
-                      />
-                    </Labelled>
-                  )}
-                </div>
-                <Labelled label="Currency">
-                  <input
-                    value={draft.priceCurrency}
-                    onChange={(event) =>
-                      patch({ priceCurrency: event.target.value })
-                    }
-                    maxLength={3}
-                    placeholder="THB"
-                    className={inputClass}
-                  />
-                </Labelled>
-              </div>
-            )}
-          </Panel>
-
           <Panel title="Categories">
             {categories.length === 0 ? (
               <p className="text-sm text-ink-500">

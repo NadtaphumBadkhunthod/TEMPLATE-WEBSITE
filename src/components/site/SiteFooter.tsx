@@ -31,16 +31,6 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
                 {t("nav.projects")}
               </Link>
             </li>
-            {settings.modules.pricing && (
-              <li>
-                <Link
-                  href={`/${locale}/pricing`}
-                  className="hover:text-brand-700"
-                >
-                  {t("nav.pricing")}
-                </Link>
-              </li>
-            )}
             {settings.modules.quote && (
               <li>
                 <Link href={`/${locale}/quote`} className="hover:text-brand-700">

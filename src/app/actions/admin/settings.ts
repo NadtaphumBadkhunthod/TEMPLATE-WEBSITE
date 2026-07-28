@@ -40,7 +40,6 @@ export async function saveSettings(
     });
 
     await saveSettingGroup("modules", {
-      pricing: formData.get("module_pricing") === "on",
       quote: formData.get("module_quote") === "on",
     });
 

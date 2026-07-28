@@ -1,8 +1,11 @@
-# Project Showcase Platform
+# Smart City Research Center
 
 A bilingual (Thai / English) project-showcase site with its own PostgreSQL database
 and admin panel. Built to be re-skinned and re-used for other clients with the
 same shape — change the database and the theme tokens, not the code.
+
+The site name is content, not code: it lives in `settings.site.name` (per language)
+and is editable from **Admin → Settings**.
 
 Design rationale lives in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
@@ -53,8 +56,7 @@ or change the password from the admin panel afterwards.
 - **Project listing** — multi-select category filter, sorting, pagination. Filters are
   plain links, so they are shareable and crawlable and work without JS.
 - **Project detail** — gallery, block description, feature list, specifications from
-  admin-defined custom fields, price (five display modes), attachments, related projects
-- **Pricing** — optional module, 404s when switched off
+  admin-defined custom fields, attachments, related projects, enquiry call-to-action
 - **Request a quote** — fields come from the database, not the code
 - **Bilingual** — `/th/…` and `/en/…`, per-locale slugs, hreflang + canonical tags,
   language switcher that resolves to the right document rather than swapping the prefix
@@ -65,12 +67,11 @@ or change the password from the admin panel afterwards.
 | Page | Does |
 |---|---|
 | Dashboard | New quotes, publish counts, per-language translation gaps |
-| Projects | Full CRUD, TH/EN tabs with completeness dots, block editor, feature list, media, categories with a primary flag, price mode, custom fields, SEO, publish per language |
+| Projects | Full CRUD, TH/EN tabs with completeness dots, block editor, feature list, media, categories with a primary flag, custom fields, SEO, publish per language |
 | Categories | CRUD with per-language name/slug/description; delete is blocked while in use |
 | Media | Upload, browse, delete (blocked while referenced) |
 | Quote requests | Inbox with search and status filter, detail view with the frozen field snapshot, status workflow, internal notes |
 | Custom fields | Add project attributes without a migration — they appear in the editor and on the detail page |
-| Pricing | Plan CRUD for the pricing module |
 | Settings | Module toggles, site/hero/contact/SEO copy per language, translation fallback policy |
 
 The admin UI itself is bilingual too (toggle at the bottom of the sidebar), independent
@@ -92,12 +93,14 @@ so the inbox can search them; everything else goes to `data` JSONB. Every submis
 also stores a `fieldSnapshot` of the labels and types **as they were at submit time**,
 so editing the form later never makes old submissions unreadable.
 
-**Modules.** `settings.modules.*` gate the pricing page and the quote form. Turning
-one off removes the route (404), the nav entry, and the related UI — verified end to end.
+**Modules.** `settings.modules.*` gate optional parts of the site — currently the
+quote form. Turning one off removes the route (404), the nav entry, and the related
+UI — verified end to end. Adding a module back means a key here plus a route guard.
 
-**Price.** `priceDisplayMode` is an enum, not a boolean: `hidden`, `exact`, `from`,
-`range`, `on_request`. A boolean would have needed a migration the first time someone
-asked for "from ฿X".
+**No pricing.** This build carries no price or pricing-plan concept: no columns on
+`projects`, no `pricing_plans` tables, no `/pricing` route. Projects are presented as
+work, and the call to action is the enquiry form rather than a price. If a future site
+built on this template needs prices, that is an additive change, not an un-picking one.
 
 **Rich text.** Descriptions are stored as a typed block array (`paragraph`, `heading`,
 `list`, `quote`) and rendered as real elements — nothing goes through

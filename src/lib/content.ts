@@ -4,7 +4,6 @@ import { db } from "./db";
 import { mediaUrl } from "./media";
 import { getSettings } from "./settings";
 import { parseBlocks, parseFeatures, type Block, type Feature } from "./blocks";
-import { formatMoney } from "./format";
 import type { Locale } from "@/i18n/config";
 import { defaultLocale } from "@/i18n/config";
 import type { Translator } from "@/i18n";
@@ -15,11 +14,6 @@ import type { Translator } from "@/i18n";
  * place, and is comfortably fast for the few hundred projects this kind of site
  * holds. Move to SQL-level pagination if the catalogue reaches five figures.
  */
-
-export type PriceView = {
-  label: string;
-  isOnRequest: boolean;
-} | null;
 
 export type ProjectCategoryView = {
   id: string;
@@ -45,7 +39,6 @@ export type ProjectListItem = {
   coverUrl: string | null;
   coverAlt: string;
   categories: ProjectCategoryView[];
-  price: PriceView;
   /** False when this locale falls back to another language's content. */
   isTranslated: boolean;
 };
@@ -75,62 +68,6 @@ const projectInclude = {
 type ProjectRow = Awaited<
   ReturnType<typeof db.project.findMany<{ include: typeof projectInclude }>>
 >[number];
-
-function decimalToNumber(value: unknown): number | null {
-  if (value === null || value === undefined) return null;
-  const n = Number(value);
-  return Number.isFinite(n) ? n : null;
-}
-
-export function resolvePrice(
-  project: {
-    priceDisplayMode: string;
-    priceAmount: unknown;
-    priceAmountMax: unknown;
-    priceCurrency: string | null;
-  },
-  locale: Locale,
-  t: Translator,
-  pricingEnabled: boolean,
-): PriceView {
-  if (!pricingEnabled) return null;
-
-  const min = decimalToNumber(project.priceAmount);
-  const max = decimalToNumber(project.priceAmountMax);
-  const currency = project.priceCurrency;
-
-  switch (project.priceDisplayMode) {
-    case "exact":
-      return min === null
-        ? null
-        : { label: formatMoney(min, currency, locale), isOnRequest: false };
-    case "from":
-      return min === null
-        ? null
-        : {
-            label: t("project.priceFrom", {
-              amount: formatMoney(min, currency, locale),
-            }),
-            isOnRequest: false,
-          };
-    case "range":
-      if (min === null) return null;
-      if (max === null) {
-        return { label: formatMoney(min, currency, locale), isOnRequest: false };
-      }
-      return {
-        label: t("project.priceRange", {
-          min: formatMoney(min, currency, locale),
-          max: formatMoney(max, currency, locale),
-        }),
-        isOnRequest: false,
-      };
-    case "on_request":
-      return { label: t("project.priceOnRequest"), isOnRequest: true };
-    default:
-      return null;
-  }
-}
 
 /**
  * Picks the translation for `locale`, honouring the site's fallback policy.
@@ -175,9 +112,7 @@ function mediaAlt(
 async function toListItem(
   project: ProjectRow,
   locale: Locale,
-  t: Translator,
   fallbackPolicy: "hide" | "fallback",
-  pricingEnabled: boolean,
 ): Promise<ProjectListItem | null> {
   const picked = pickTranslation(project.translations, locale, fallbackPolicy);
   if (!picked) return null;
@@ -205,7 +140,6 @@ async function toListItem(
       ? mediaAlt(project.coverMedia.translations, locale, picked.row.title)
       : picked.row.title,
     categories,
-    price: resolvePrice(project, locale, t, pricingEnabled),
     isTranslated: picked.isTranslated,
   };
 }
@@ -221,12 +155,10 @@ export type ProjectQuery = {
 
 export async function getProjects(
   locale: Locale,
-  t: Translator,
   query: ProjectQuery = {},
 ): Promise<{ items: ProjectListItem[]; total: number; pages: number }> {
   const settings = await getSettings();
   const fallbackPolicy = settings.i18n.contentFallback;
-  const pricingEnabled = settings.modules.pricing;
 
   const rows = await db.project.findMany({
     where: {
@@ -251,13 +183,7 @@ export async function getProjects(
 
   const mapped: ProjectListItem[] = [];
   for (const row of rows) {
-    const item = await toListItem(
-      row,
-      locale,
-      t,
-      fallbackPolicy,
-      pricingEnabled,
-    );
+    const item = await toListItem(row, locale, fallbackPolicy);
     if (item) mapped.push(item);
   }
 
@@ -300,7 +226,6 @@ export async function getProjectBySlug(
 ): Promise<ProjectDetail | null> {
   const slug = decodeSlug(rawSlug);
   const settings = await getSettings();
-  const pricingEnabled = settings.modules.pricing;
   const fallbackPolicy = settings.i18n.contentFallback;
 
   // Match the slug in any locale so a shared Thai URL still resolves when the
@@ -315,7 +240,7 @@ export async function getProjectBySlug(
 
   if (!row) return null;
 
-  const base = await toListItem(row, locale, t, fallbackPolicy, pricingEnabled);
+  const base = await toListItem(row, locale, fallbackPolicy);
   if (!base) return null;
 
   const picked = pickTranslation(row.translations, locale, fallbackPolicy);
@@ -460,14 +385,13 @@ export async function getCategoriesWithCounts(
 
 export async function getRelatedProjects(
   locale: Locale,
-  t: Translator,
   project: ProjectDetail,
   limit = 3,
 ): Promise<ProjectListItem[]> {
   const slugs = project.categories.map((c) => c.slug);
   if (!slugs.length) return [];
 
-  const { items } = await getProjects(locale, t, { categorySlugs: slugs });
+  const { items } = await getProjects(locale, { categorySlugs: slugs });
   return items.filter((item) => item.id !== project.id).slice(0, limit);
 }
 

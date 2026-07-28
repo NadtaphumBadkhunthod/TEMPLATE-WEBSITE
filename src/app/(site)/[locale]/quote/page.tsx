@@ -41,7 +41,7 @@ export default async function QuotePage({
 
   const [form, projects] = await Promise.all([
     getForm(QUOTE_FORM_KEY, locale),
-    getProjects(locale, t, { limit: 200 }),
+    getProjects(locale, { limit: 200 }),
   ]);
 
   return (

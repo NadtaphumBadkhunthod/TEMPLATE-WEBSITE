@@ -5,6 +5,14 @@ for setup and for the handful of places the build deliberately deviates from thi
 document (auth, i18n and the rich-text editor are hand-rolled rather than pulled from
 libraries). The shipped schema is `prisma/schema.prisma`; `schema.prisma` in this
 folder is the original design draft.
+
+**Superseded on 2026-07-28:** the pricing module described below was removed at the
+client's request — no price columns on `projects`, no `PriceDisplayMode` enum, no
+`pricing_plans` / `pricing_plan_translations` tables, no `/pricing` route or admin
+page, and no `modules.pricing` setting. The sections on pricing are kept here as a
+record of the original design; `prisma/schema.prisma` is authoritative. The site is
+now named **Smart City Research Center** (`settings.site.name`, editable per language
+in the admin panel).
 **Scope:** one standalone bilingual (TH/EN) project-showcase site with its own PostgreSQL database and admin panel, designed to be re-used as a template for future sites of the same shape.
 
 ---
