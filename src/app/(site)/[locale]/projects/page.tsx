@@ -53,7 +53,7 @@ export default async function ProjectsPage({
 
   const [categories, result] = await Promise.all([
     getCategoriesWithCounts(locale),
-    getProjects(locale, t, {
+    getProjects(locale, {
       categorySlugs: selected,
       sort,
       page: Number.isFinite(page) && page > 0 ? page : 1,

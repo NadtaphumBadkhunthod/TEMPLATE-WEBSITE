@@ -23,7 +23,7 @@ export default async function HomePage({
   const settings = await getSettings();
 
   const [featured, categories] = await Promise.all([
-    getProjects(locale, t, { featuredOnly: true, limit: 3 }),
+    getProjects(locale, { featuredOnly: true, limit: 3 }),
     getCategoriesWithCounts(locale),
   ]);
 
@@ -31,7 +31,7 @@ export default async function HomePage({
   // so a fresh install never shows an empty homepage.
   const highlights = featured.items.length
     ? featured.items
-    : (await getProjects(locale, t, { limit: 3 })).items;
+    : (await getProjects(locale, { limit: 3 })).items;
 
   return (
     <>

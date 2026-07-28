@@ -87,18 +87,6 @@ export default async function ProjectEditorPage({
     status: (project?.status ?? "draft") as ProjectDraft["status"],
     isFeatured: project?.isFeatured ?? false,
     sortOrder: project?.sortOrder ?? 0,
-    priceDisplayMode: (project?.priceDisplayMode ??
-      "hidden") as ProjectDraft["priceDisplayMode"],
-    priceAmount:
-      project?.priceAmount === null || project?.priceAmount === undefined
-        ? ""
-        : String(project.priceAmount),
-    priceAmountMax:
-      project?.priceAmountMax === null || project?.priceAmountMax === undefined
-        ? ""
-        : String(project.priceAmountMax),
-    priceCurrency: project?.priceCurrency ?? "THB",
-    priceUnit: project?.priceUnit ?? "",
     coverMediaId: project?.coverMediaId ?? null,
     categoryIds: project?.categories.map((link) => link.categoryId) ?? [],
     primaryCategoryId:

@@ -40,8 +40,6 @@ async function main() {
   await db.category.deleteMany();
   await db.fieldDefinitionTranslation.deleteMany();
   await db.fieldDefinition.deleteMany();
-  await db.pricingPlanTranslation.deleteMany();
-  await db.pricingPlan.deleteMany();
   await db.pageTranslation.deleteMany();
   await db.page.deleteMany();
   await db.mediaTranslation.deleteMany();
@@ -93,10 +91,13 @@ async function main() {
   // --- settings -------------------------------------------------------------
   const settings: Record<string, unknown> = {
     site: {
-      name: { th: "เออร์เบินคอร์ โซลูชันส์", en: "UrbanCore Solutions" },
+      name: {
+        th: "ศูนย์วิจัยเมืองอัจฉริยะ",
+        en: "Smart City Research Center",
+      },
       tagline: {
-        th: "ระบบเมืองอัจฉริยะที่ติดตั้งใช้งานได้จริง",
-        en: "Smart city systems that actually get deployed",
+        th: "งานวิจัยและระบบเมืองอัจฉริยะที่ใช้งานได้จริง",
+        en: "Research and smart city systems that actually get deployed",
       },
     },
     hero: {
@@ -111,14 +112,14 @@ async function main() {
       ctaLabel: { th: "ดูผลงานของเรา", en: "See our work" },
     },
     contact: {
-      email: "hello@urbancore.example",
+      email: "hello@smartcityresearch.example",
       phone: "+66 2 123 4567",
       address: {
         th: "อาคารพหลโยธินเพลส ชั้น 12 กรุงเทพมหานคร 10400",
         en: "Phahonyothin Place, 12th floor, Bangkok 10400, Thailand",
       },
     },
-    modules: { pricing: true, quote: true },
+    modules: { quote: true },
     seo: {
       defaultTitle: {
         th: "ผลงานระบบเมืองอัจฉริยะ",
@@ -130,7 +131,7 @@ async function main() {
       },
     },
     i18n: { contentFallback: "fallback" },
-    quote: { notifyEmails: ["sales@urbancore.example"] },
+    quote: { notifyEmails: ["sales@smartcityresearch.example"] },
   };
 
   for (const [key, value] of Object.entries(settings)) {
@@ -265,11 +266,6 @@ async function main() {
     slugEn: string;
     categories: string[];
     featured?: boolean;
-    price: {
-      mode: "hidden" | "exact" | "from" | "range" | "on_request";
-      amount?: number;
-      max?: number;
-    };
     custom: Record<string, unknown>;
     th: { title: string; summary: string; body: string[]; features: string[]; coverage: string };
     en: { title: string; summary: string; body: string[]; features: string[]; coverage: string };
@@ -281,7 +277,6 @@ async function main() {
       slugEn: "khon-kaen-smart-street-lighting",
       categories: ["smart-energy", "public-safety"],
       featured: true,
-      price: { mode: "from", amount: 2450000 },
       custom: { connectivity: "lora", deployed_year: 2023 },
       th: {
         title: "ระบบไฟถนนอัจฉริยะ เทศบาลนครขอนแก่น",
@@ -321,7 +316,6 @@ async function main() {
       slugEn: "phuket-traffic-control-centre",
       categories: ["smart-mobility", "data-platform"],
       featured: true,
-      price: { mode: "on_request" },
       custom: { connectivity: "fiber", deployed_year: 2024 },
       th: {
         title: "ศูนย์ควบคุมจราจรอัจฉริยะ จังหวัดภูเก็ต",
@@ -361,7 +355,6 @@ async function main() {
       slugEn: "chiang-mai-air-quality-network",
       categories: ["environment", "data-platform"],
       featured: true,
-      price: { mode: "range", amount: 850000, max: 3200000 },
       custom: { connectivity: "nbiot", deployed_year: 2022 },
       th: {
         title: "เครือข่ายตรวจวัดคุณภาพอากาศ จังหวัดเชียงใหม่",
@@ -400,7 +393,6 @@ async function main() {
       slugTh: "ระบบบริหารจัดการขยะอัจฉริยะระยอง",
       slugEn: "rayong-smart-waste-management",
       categories: ["environment", "smart-mobility"],
-      price: { mode: "exact", amount: 1780000 },
       custom: { connectivity: "lora", deployed_year: 2023 },
       th: {
         title: "ระบบบริหารจัดการขยะอัจฉริยะ เทศบาลเมืองระยอง",
@@ -439,7 +431,6 @@ async function main() {
       slugTh: "แพลตฟอร์มข้อมูลเมืองกลาง",
       slugEn: "central-city-data-platform",
       categories: ["data-platform"],
-      price: { mode: "hidden" },
       custom: { connectivity: "fiber", deployed_year: 2024 },
       th: {
         title: "แพลตฟอร์มข้อมูลเมืองกลาง (City Data Hub)",
@@ -478,7 +469,6 @@ async function main() {
       slugTh: "ระบบกล้องวงจรปิดอัจฉริยะเทศบาลนครหาดใหญ่",
       slugEn: "hat-yai-intelligent-cctv",
       categories: ["public-safety"],
-      price: { mode: "from", amount: 3600000 },
       custom: { connectivity: "fiber", deployed_year: 2022 },
       th: {
         title: "ระบบกล้องวงจรปิดอัจฉริยะ เทศบาลนครหาดใหญ่",
@@ -522,10 +512,6 @@ async function main() {
         isFeatured: seed.featured ?? false,
         sortOrder: index,
         publishedAt: new Date(Date.now() - index * 86400000 * 12),
-        priceDisplayMode: seed.price.mode,
-        priceAmount: seed.price.amount ?? null,
-        priceAmountMax: seed.price.max ?? null,
-        priceCurrency: seed.price.mode === "hidden" ? null : "THB",
         custom: seed.custom as never,
         translations: {
           create: [
@@ -569,135 +555,11 @@ async function main() {
     console.log(`  project: ${project.id} — ${seed.en.title}`);
   }
 
-  // --- pricing plans --------------------------------------------------------
-  const plans = [
-    {
-      amount: 180000,
-      period: "one_time",
-      featured: false,
-      th: {
-        name: "สำรวจและออกแบบ",
-        tagline: "เหมาะสำหรับหน่วยงานที่เพิ่งเริ่มต้น",
-        features: [
-          "สำรวจพื้นที่และประเมินความพร้อม",
-          "ออกแบบสถาปัตยกรรมระบบ",
-          "ประมาณการงบประมาณโครงการ",
-          "-การติดตั้งหน้างาน",
-        ],
-        cta: "ปรึกษาเรา",
-      },
-      en: {
-        name: "Survey & Design",
-        tagline: "For teams still scoping the problem",
-        features: [
-          "Site survey and readiness assessment",
-          "System architecture design",
-          "Project budget estimate",
-          "-On-site installation",
-        ],
-        cta: "Talk to us",
-      },
-    },
-    {
-      amount: 1250000,
-      period: "one_time",
-      featured: true,
-      th: {
-        name: "ติดตั้งระบบนำร่อง",
-        tagline: "พิสูจน์ผลลัพธ์จริงก่อนขยายเต็มพื้นที่",
-        features: [
-          "ทุกอย่างในแพ็กเกจสำรวจและออกแบบ",
-          "ติดตั้งอุปกรณ์นำร่องสูงสุด 50 จุด",
-          "แดชบอร์ดและรายงานผล 6 เดือน",
-          "อบรมเจ้าหน้าที่ 2 ครั้ง",
-        ],
-        cta: "ขอใบเสนอราคา",
-      },
-      en: {
-        name: "Pilot Deployment",
-        tagline: "Prove the outcome before scaling up",
-        features: [
-          "Everything in Survey & Design",
-          "Up to 50 pilot devices installed",
-          "Dashboard and 6 months of reporting",
-          "Two staff training sessions",
-        ],
-        cta: "Request a quote",
-      },
-    },
-    {
-      amount: null,
-      period: null,
-      featured: false,
-      th: {
-        name: "ติดตั้งเต็มพื้นที่",
-        tagline: "สำหรับโครงการระดับเมือง",
-        features: [
-          "ออกแบบเฉพาะตามขนาดพื้นที่",
-          "ติดตั้งและเชื่อมต่อระบบเดิม",
-          "สัญญาดูแลรักษา 3–5 ปี",
-          "SLA ตอบสนองภายใน 4 ชั่วโมง",
-        ],
-        cta: "ติดต่อฝ่ายขาย",
-      },
-      en: {
-        name: "Full Rollout",
-        tagline: "For city-scale programmes",
-        features: [
-          "Design scaled to your footprint",
-          "Installation and legacy integration",
-          "3–5 year maintenance contract",
-          "4-hour response SLA",
-        ],
-        cta: "Contact sales",
-      },
-    },
-  ];
-
-  for (const [index, plan] of plans.entries()) {
-    await db.pricingPlan.create({
-      data: {
-        priceDisplayMode: plan.amount === null ? "on_request" : "from",
-        priceAmount: plan.amount,
-        priceCurrency: plan.amount === null ? null : "THB",
-        billingPeriod: plan.period,
-        isFeatured: plan.featured,
-        sortOrder: index,
-        translations: {
-          create: [
-            {
-              locale: TH,
-              name: plan.th.name,
-              tagline: plan.th.tagline,
-              ctaLabel: plan.th.cta,
-              features: plan.th.features.map((line) =>
-                line.startsWith("-")
-                  ? { text: line.slice(1), included: false }
-                  : { text: line, included: true },
-              ) as never,
-            },
-            {
-              locale: EN,
-              name: plan.en.name,
-              tagline: plan.en.tagline,
-              ctaLabel: plan.en.cta,
-              features: plan.en.features.map((line) =>
-                line.startsWith("-")
-                  ? { text: line.slice(1), included: false }
-                  : { text: line, included: true },
-              ) as never,
-            },
-          ],
-        },
-      },
-    });
-  }
-
   // --- quote request form ---------------------------------------------------
   const form = await db.form.create({
     data: {
       key: "quote_request",
-      notifyEmails: ["sales@urbancore.example"] as never,
+      notifyEmails: ["sales@smartcityresearch.example"] as never,
     },
   });
 

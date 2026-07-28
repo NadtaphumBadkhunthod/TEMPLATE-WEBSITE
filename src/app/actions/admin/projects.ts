@@ -26,11 +26,6 @@ type ProjectPayload = {
   status: "draft" | "published" | "archived";
   isFeatured: boolean;
   sortOrder: number;
-  priceDisplayMode: "hidden" | "exact" | "from" | "range" | "on_request";
-  priceAmount: string;
-  priceAmountMax: string;
-  priceCurrency: string;
-  priceUnit: string;
   coverMediaId: string | null;
   categoryIds: string[];
   primaryCategoryId: string | null;
@@ -39,13 +34,6 @@ type ProjectPayload = {
   attachments: { mediaId: string; label: string }[];
   translations: Record<string, TranslationInput>;
 };
-
-function toDecimal(value: string): number | null {
-  const trimmed = (value ?? "").trim();
-  if (!trimmed) return null;
-  const parsed = Number(trimmed);
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
-}
 
 export async function saveProject(
   _prev: SaveState,
@@ -68,28 +56,10 @@ export async function saveProject(
     return { status: "error", message: "Add a title in at least one language." };
   }
 
-  const priceAmount = toDecimal(payload.priceAmount);
-  const priceAmountMax = toDecimal(payload.priceAmountMax);
-
-  if (
-    ["exact", "from", "range"].includes(payload.priceDisplayMode) &&
-    priceAmount === null
-  ) {
-    return {
-      status: "error",
-      message: "Enter a price, or set the price display to hidden / on request.",
-    };
-  }
-
   const projectData = {
     status: payload.status,
     isFeatured: payload.isFeatured,
     sortOrder: Number.isFinite(payload.sortOrder) ? payload.sortOrder : 0,
-    priceDisplayMode: payload.priceDisplayMode,
-    priceAmount,
-    priceAmountMax: payload.priceDisplayMode === "range" ? priceAmountMax : null,
-    priceCurrency: payload.priceCurrency?.trim().toUpperCase() || null,
-    priceUnit: payload.priceUnit?.trim() || null,
     coverMediaId: payload.coverMediaId || null,
     custom: payload.custom as never,
     publishedAt:

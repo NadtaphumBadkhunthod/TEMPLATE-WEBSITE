@@ -12,7 +12,6 @@ type Labels = {
   categories: string;
   media: string;
   quotes: string;
-  pricing: string;
   fields: string;
   settings: string;
   users: string;
@@ -24,13 +23,11 @@ export function AdminNav({
   locale,
   role,
   userName,
-  pricingEnabled,
   labels,
 }: {
   locale: Locale;
   role: "admin" | "editor";
   userName: string;
-  pricingEnabled: boolean;
   labels: Labels;
 }) {
   const pathname = usePathname();
@@ -47,9 +44,6 @@ export function AdminNav({
     },
     {
       items: [
-        ...(pricingEnabled
-          ? [{ href: "/admin/pricing", label: labels.pricing }]
-          : []),
         { href: "/admin/fields", label: labels.fields },
         ...(role === "admin"
           ? [

@@ -23,7 +23,6 @@ export type SiteSettings = {
   };
   /** Optional modules — pages read these and 404 when disabled. */
   modules: {
-    pricing: boolean;
     quote: boolean;
   };
   seo: {
@@ -41,10 +40,10 @@ export type SiteSettings = {
 
 export const defaultSettings: SiteSettings = {
   site: {
-    name: { th: "ชื่อบริษัทของคุณ", en: "Your Company" },
+    name: { th: "ศูนย์วิจัยเมืองอัจฉริยะ", en: "Smart City Research Center" },
     tagline: {
-      th: "ผลงานและโซลูชันของเรา",
-      en: "Our projects and solutions",
+      th: "งานวิจัยและโครงการของเรา",
+      en: "Our research and projects",
     },
   },
   hero: {
@@ -64,7 +63,6 @@ export const defaultSettings: SiteSettings = {
     address: { th: "กรุงเทพมหานคร ประเทศไทย", en: "Bangkok, Thailand" },
   },
   modules: {
-    pricing: true,
     quote: true,
   },
   seo: {

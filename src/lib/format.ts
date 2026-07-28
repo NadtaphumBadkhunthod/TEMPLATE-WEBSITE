@@ -5,26 +5,6 @@ const localeTags: Record<string, string> = {
   en: "en-US",
 };
 
-export function formatMoney(
-  amount: number | null | undefined,
-  currency: string | null | undefined,
-  locale: Locale,
-): string {
-  if (amount === null || amount === undefined) return "";
-  const code = currency || "THB";
-  try {
-    return new Intl.NumberFormat(localeTags[locale] ?? "en-US", {
-      style: "currency",
-      currency: code,
-      // Without this, en-US renders THB as "THB 2,450,000" rather than "฿…".
-      currencyDisplay: "narrowSymbol",
-      maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
-    }).format(amount);
-  } catch {
-    return `${amount.toLocaleString()} ${code}`;
-  }
-}
-
 export function formatDate(
   value: Date | string | null | undefined,
   locale: Locale,

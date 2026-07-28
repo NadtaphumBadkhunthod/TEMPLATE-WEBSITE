@@ -74,7 +74,7 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 
   const settings = await getSettings();
   const [related, alternates] = await Promise.all([
-    getRelatedProjects(locale, t, project),
+    getRelatedProjects(locale, project),
     slugAlternates(project.id),
   ]);
 
@@ -192,11 +192,13 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
           )}
         </div>
 
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <PriceCard project={project} locale={locale} t={t} quoteEnabled={settings.modules.quote} />
+        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+          {settings.modules.quote && (
+            <EnquiryCard project={project} locale={locale} t={t} />
+          )}
 
           {project.attachments.length > 0 && (
-            <section className="mt-6 rounded-[--radius-card] border border-ink-200 p-5">
+            <section className="rounded-[--radius-card] border border-ink-200 p-5">
               <h2 className="text-sm font-semibold text-ink-900">
                 {t("project.attachments")}
               </h2>
@@ -246,40 +248,28 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
   );
 }
 
-function PriceCard({
+function EnquiryCard({
   project,
   locale,
   t,
-  quoteEnabled,
 }: {
   project: ProjectDetail;
   locale: Locale;
   t: ReturnType<typeof getTranslator>;
-  quoteEnabled: boolean;
 }) {
   return (
     <div className="rounded-[--radius-card] border border-ink-200 bg-ink-50/60 p-5">
-      {project.price ? (
-        <>
-          <p className="text-xs font-medium uppercase tracking-wide text-ink-500">
-            {t("project.price")}
-          </p>
-          <p className="mt-1 text-2xl font-bold text-ink-900">
-            {project.price.label}
-          </p>
-        </>
-      ) : (
-        <p className="text-sm text-ink-500">{t("project.priceOnRequest")}</p>
-      )}
+      <p className="text-base font-semibold text-ink-900">
+        {t("project.enquiry")}
+      </p>
+      <p className="mt-1 text-sm text-ink-500">{t("project.enquiryBody")}</p>
 
-      {quoteEnabled && (
-        <Link
-          href={`/${locale}/quote?project=${encodeURIComponent(project.slug)}`}
-          className="mt-4 block rounded-lg bg-brand-600 px-4 py-3 text-center font-medium text-white transition hover:bg-brand-700"
-        >
-          {t("project.requestQuote")}
-        </Link>
-      )}
+      <Link
+        href={`/${locale}/quote?project=${encodeURIComponent(project.slug)}`}
+        className="mt-4 block rounded-lg bg-brand-600 px-4 py-3 text-center font-medium text-white transition hover:bg-brand-700"
+      >
+        {t("project.requestQuote")}
+      </Link>
     </div>
   );
 }
