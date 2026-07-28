@@ -1,0 +1,586 @@
+// Implemented schema — see docs/ARCHITECTURE.md §2 for the rationale.
+//
+// Differences from docs/schema.prisma (the design draft), all deliberate:
+//   - no citext/pgcrypto extensions: emails are normalised to lowercase in app
+//     code instead, so the DB needs no superuser extension step
+//   - sizeBytes is Int (bytes) rather than BigInt, so rows serialise cleanly
+//     from server components to client components
+//   - ipAddress is text rather than inet, to tolerate proxy junk in XFF headers
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------- enums
+
+enum ProjectStatus {
+  draft
+  published
+  archived
+}
+
+enum PriceDisplayMode {
+  hidden
+  exact
+  from
+  range
+  on_request
+}
+
+enum MediaKind {
+  image
+  document
+  video
+  other
+}
+
+enum MediaRole {
+  cover
+  gallery
+  attachment
+  video
+  document
+}
+
+enum FieldDataType {
+  text
+  number
+  boolean
+  date
+  select
+  url
+}
+
+enum FormFieldType {
+  text
+  textarea
+  email
+  tel
+  number
+  select
+  checkbox
+  date
+  consent
+}
+
+enum QuoteStatus {
+  new
+  in_progress
+  quoted
+  won
+  lost
+  spam
+}
+
+enum AdminRole {
+  admin
+  editor
+}
+
+enum PageStatus {
+  draft
+  published
+}
+
+// ---------------------------------------------------------------- i18n
+
+model Locale {
+  code       String  @id
+  name       String
+  nativeName String?
+  isDefault  Boolean @default(false)
+  isActive   Boolean @default(true)
+  sortOrder  Int     @default(0)
+
+  projectTranslations         ProjectTranslation[]
+  categoryTranslations        CategoryTranslation[]
+  mediaTranslations           MediaTranslation[]
+  fieldDefinitionTranslations FieldDefinitionTranslation[]
+  formFieldTranslations       FormFieldTranslation[]
+  pricingPlanTranslations     PricingPlanTranslation[]
+  pageTranslations            PageTranslation[]
+  quoteRequests               QuoteRequest[]
+
+  @@map("locales")
+}
+
+// ---------------------------------------------------------------- admin
+
+model AdminUser {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         AdminRole @default(editor)
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  uploadedMedia  MediaAsset[]
+  assignedQuotes QuoteRequest[]
+  quoteNotes     QuoteRequestNote[]
+  auditLogs      AuditLog[]
+
+  @@map("admin_users")
+}
+
+// ---------------------------------------------------------------- projects
+
+model Project {
+  id     String        @id @default(uuid())
+  status ProjectStatus @default(draft)
+
+  sortOrder   Int       @default(0)
+  publishedAt DateTime?
+  isFeatured  Boolean   @default(false)
+
+  priceDisplayMode PriceDisplayMode @default(hidden)
+  priceAmount      Decimal?         @db.Decimal(14, 2)
+  priceAmountMax   Decimal?         @db.Decimal(14, 2)
+  priceCurrency    String?          @db.VarChar(3)
+  priceUnit        String?
+
+  coverMediaId String?
+  coverMedia   MediaAsset? @relation("ProjectCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+
+  /// Non-translatable custom attributes, keyed by FieldDefinition.key
+  custom Json @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations  ProjectTranslation[]
+  categories    ProjectCategory[]
+  media         ProjectMedia[]
+  quoteRequests QuoteRequest[]
+
+  @@index([status, publishedAt])
+  @@index([isFeatured])
+  @@index([sortOrder])
+  @@map("projects")
+}
+
+model ProjectTranslation {
+  id        String  @id @default(uuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  locale    String
+  localeRef Locale  @relation(fields: [locale], references: [code])
+
+  slug    String
+  title   String
+  summary String?
+
+  /// Structured block document: [{ type, text }] — see src/lib/blocks.ts
+  body Json @default("[]")
+
+  /// [{ text }] — the "list format" option for features
+  features Json @default("[]")
+
+  /// Translatable custom attributes, keyed by FieldDefinition.key
+  custom Json @default("{}")
+
+  seoTitle       String?
+  seoDescription String?
+
+  isPublished Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, locale])
+  @@unique([locale, slug])
+  @@index([locale, isPublished])
+  @@map("project_translations")
+}
+
+// ---------------------------------------------------------------- categories
+
+model Category {
+  id        String     @id @default(uuid())
+  parentId  String?
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children  Category[] @relation("CategoryTree")
+  sortOrder Int        @default(0)
+  isActive  Boolean    @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations CategoryTranslation[]
+  projects     ProjectCategory[]
+
+  @@index([parentId, sortOrder])
+  @@map("categories")
+}
+
+model CategoryTranslation {
+  id         String   @id @default(uuid())
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  locale     String
+  localeRef  Locale   @relation(fields: [locale], references: [code])
+
+  slug        String
+  name        String
+  description String?
+
+  @@unique([categoryId, locale])
+  @@unique([locale, slug])
+  @@map("category_translations")
+}
+
+/// Many-to-many. Exactly one row per project may have isPrimary = true;
+/// enforced by a partial unique index created in prisma/seed.ts.
+model ProjectCategory {
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  isPrimary  Boolean  @default(false)
+  sortOrder  Int      @default(0)
+
+  @@id([projectId, categoryId])
+  @@index([categoryId])
+  @@map("project_categories")
+}
+
+// ---------------------------------------------------------------- media
+
+model MediaAsset {
+  id   String    @id @default(uuid())
+  kind MediaKind @default(image)
+
+  /// Either an uploaded object (storageKey) or an external link (externalUrl).
+  storageKey  String?
+  externalUrl String?
+
+  originalName String?
+  mimeType     String?
+  sizeBytes    Int?
+  width        Int?
+  height       Int?
+
+  uploadedById String?
+  uploadedBy   AdminUser? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations    MediaTranslation[]
+  projectMedia    ProjectMedia[]
+  coverOfProjects Project[]          @relation("ProjectCover")
+
+  @@index([kind])
+  @@map("media_assets")
+}
+
+model MediaTranslation {
+  id        String     @id @default(uuid())
+  mediaId   String
+  media     MediaAsset @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  locale    String
+  localeRef Locale     @relation(fields: [locale], references: [code])
+
+  title   String?
+  altText String?
+  caption String?
+
+  @@unique([mediaId, locale])
+  @@map("media_translations")
+}
+
+model ProjectMedia {
+  id        String     @id @default(uuid())
+  projectId String
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  mediaId   String
+  media     MediaAsset @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+
+  role      MediaRole @default(gallery)
+  sortOrder Int       @default(0)
+  isPublic  Boolean   @default(true)
+
+  /// Free-text label for attachments ("Brochure", "Spec sheet")
+  label String?
+
+  @@unique([projectId, mediaId, role])
+  @@index([projectId, role, sortOrder])
+  @@map("project_media")
+}
+
+// ---------------------------------------------------------------- custom field registry
+
+model FieldDefinition {
+  id     String @id @default(uuid())
+  entity String
+  key    String
+
+  dataType       FieldDataType
+  isTranslatable Boolean       @default(false)
+  isFilterable   Boolean       @default(false)
+  isRequired     Boolean       @default(false)
+  showOnCard     Boolean       @default(false)
+  showOnDetail   Boolean       @default(true)
+
+  /// { choices: [{ value }], unit? }
+  options Json @default("{}")
+
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations FieldDefinitionTranslation[]
+
+  @@unique([entity, key])
+  @@map("field_definitions")
+}
+
+model FieldDefinitionTranslation {
+  id                String          @id @default(uuid())
+  fieldDefinitionId String
+  fieldDefinition   FieldDefinition @relation(fields: [fieldDefinitionId], references: [id], onDelete: Cascade)
+  locale            String
+  localeRef         Locale          @relation(fields: [locale], references: [code])
+
+  label    String
+  helpText String?
+  /// { "<value>": "<label>" }
+  choiceLabels Json @default("{}")
+
+  @@unique([fieldDefinitionId, locale])
+  @@map("field_definition_translations")
+}
+
+// ---------------------------------------------------------------- forms & quotes
+
+model Form {
+  id       String  @id @default(uuid())
+  key      String  @unique
+  isActive Boolean @default(true)
+
+  /// string[] of notification recipients
+  notifyEmails Json @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fields   FormField[]
+  requests QuoteRequest[]
+
+  @@map("forms")
+}
+
+model FormField {
+  id     String @id @default(uuid())
+  formId String
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  key       String
+  fieldType FormFieldType
+
+  /// Maps onto a first-class QuoteRequest column when set:
+  /// 'name' | 'email' | 'phone' | 'message'. Otherwise stored in data JSONB.
+  mapsToColumn String?
+
+  isRequired Boolean @default(false)
+  sortOrder  Int     @default(0)
+  isActive   Boolean @default(true)
+  width      String  @default("full")
+
+  /// { choices: [{ value }] }
+  options Json @default("{}")
+  /// { minLength, maxLength, pattern }
+  validation Json @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations FormFieldTranslation[]
+
+  @@unique([formId, key])
+  @@index([formId, sortOrder])
+  @@map("form_fields")
+}
+
+model FormFieldTranslation {
+  id          String    @id @default(uuid())
+  formFieldId String
+  formField   FormField @relation(fields: [formFieldId], references: [id], onDelete: Cascade)
+  locale      String
+  localeRef   Locale    @relation(fields: [locale], references: [code])
+
+  label        String
+  placeholder  String?
+  helpText     String?
+  choiceLabels Json    @default("{}")
+
+  @@unique([formFieldId, locale])
+  @@map("form_field_translations")
+}
+
+model QuoteRequest {
+  id     String @id @default(uuid())
+  formId String
+  form   Form   @relation(fields: [formId], references: [id], onDelete: Restrict)
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  locale    String
+  localeRef Locale @relation(fields: [locale], references: [code])
+
+  name    String
+  email   String
+  phone   String?
+  message String?
+
+  /// Values for fields with no dedicated column
+  data Json @default("{}")
+
+  /// Field labels/types AS SUBMITTED, so old entries stay readable after the
+  /// form is edited: [{ key, label, type, value }]
+  fieldSnapshot Json @default("[]")
+
+  status       QuoteStatus @default(new)
+  assignedToId String?
+  assignedTo   AdminUser?  @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+  handledAt    DateTime?
+
+  sourceUrl String?
+  referrer  String?
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notes QuoteRequestNote[]
+
+  @@index([status, createdAt])
+  @@index([projectId])
+  @@index([email])
+  @@map("quote_requests")
+}
+
+model QuoteRequestNote {
+  id             String       @id @default(uuid())
+  quoteRequestId String
+  quoteRequest   QuoteRequest @relation(fields: [quoteRequestId], references: [id], onDelete: Cascade)
+  authorId       String?
+  author         AdminUser?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([quoteRequestId, createdAt])
+  @@map("quote_request_notes")
+}
+
+// ---------------------------------------------------------------- pricing module
+
+model PricingPlan {
+  id String @id @default(uuid())
+
+  priceDisplayMode PriceDisplayMode @default(exact)
+  priceAmount      Decimal?         @db.Decimal(14, 2)
+  priceAmountMax   Decimal?         @db.Decimal(14, 2)
+  priceCurrency    String?          @db.VarChar(3)
+  billingPeriod    String?
+
+  isFeatured Boolean @default(false)
+  sortOrder  Int     @default(0)
+  isActive   Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations PricingPlanTranslation[]
+
+  @@map("pricing_plans")
+}
+
+model PricingPlanTranslation {
+  id            String      @id @default(uuid())
+  pricingPlanId String
+  pricingPlan   PricingPlan @relation(fields: [pricingPlanId], references: [id], onDelete: Cascade)
+  locale        String
+  localeRef     Locale      @relation(fields: [locale], references: [code])
+
+  name    String
+  tagline String?
+  /// [{ text, included }]
+  features Json    @default("[]")
+  ctaLabel String?
+  ctaUrl   String?
+
+  @@unique([pricingPlanId, locale])
+  @@map("pricing_plan_translations")
+}
+
+// ---------------------------------------------------------------- pages & settings
+
+model Page {
+  id     String     @id @default(uuid())
+  key    String     @unique
+  status PageStatus @default(draft)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations PageTranslation[]
+
+  @@map("pages")
+}
+
+model PageTranslation {
+  id        String @id @default(uuid())
+  pageId    String
+  page      Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  locale    String
+  localeRef Locale @relation(fields: [locale], references: [code])
+
+  slug  String?
+  title String
+  body  Json   @default("[]")
+
+  seoTitle       String?
+  seoDescription String?
+  isPublished    Boolean @default(false)
+
+  @@unique([pageId, locale])
+  @@map("page_translations")
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  scope     String   @default("site")
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model AuditLog {
+  id       String     @id @default(uuid())
+  actorId  String?
+  actor    AdminUser? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action   String
+  entity   String
+  entityId String?
+  diff     Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
