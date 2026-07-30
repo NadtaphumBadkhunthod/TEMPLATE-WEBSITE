@@ -59,7 +59,7 @@ export default async function AdminMediaPage() {
                       className="size-full object-cover"
                     />
                   ) : (
-                    <div className="grid size-full place-items-center text-3xl text-ink-300">
+                    <div className="grid size-full place-items-center text-3xl text-ink-500">
                       ⎙
                     </div>
                   )}
@@ -72,14 +72,14 @@ export default async function AdminMediaPage() {
                   >
                     {asset.originalName ?? asset.id}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-ink-400">
+                  <p className="mt-0.5 text-[11px] text-ink-500">
                     {formatFileSize(asset.sizeBytes)} ·{" "}
                     {formatDate(asset.createdAt, locale)}
                   </p>
 
                   <div className="mt-2 flex items-center justify-between">
                     {inUse ? (
-                      <span className="text-[11px] text-ink-400">
+                      <span className="text-[11px] text-ink-500">
                         in use ({asset._count.projectMedia +
                           asset._count.coverOfProjects})
                       </span>

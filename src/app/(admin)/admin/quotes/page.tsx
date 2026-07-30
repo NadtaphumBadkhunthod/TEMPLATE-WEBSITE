@@ -117,7 +117,7 @@ export default async function AdminQuotesPage({
                   <td className="px-4 py-3 text-ink-600">
                     <div>{quote.email}</div>
                     {quote.phone && (
-                      <div className="text-xs text-ink-400">{quote.phone}</div>
+                      <div className="text-xs text-ink-500">{quote.phone}</div>
                     )}
                   </td>
                   <td className="px-4 py-3 text-ink-600">

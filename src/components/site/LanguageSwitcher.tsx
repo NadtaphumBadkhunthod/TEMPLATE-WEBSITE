@@ -53,7 +53,7 @@ export function LanguageSwitcher({
             <span
               key={locale}
               title="Not available in this language"
-              className="cursor-not-allowed rounded-md px-2.5 py-1 text-ink-300"
+              className="cursor-not-allowed rounded-md px-2.5 py-1 text-ink-500"
             >
               {localeLabels[locale]}
             </span>

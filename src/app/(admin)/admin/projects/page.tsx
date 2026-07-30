@@ -142,7 +142,7 @@ export default async function AdminProjectsPage({
                                 ? "bg-emerald-100 text-emerald-800"
                                 : state === "draft"
                                   ? "bg-amber-100 text-amber-800"
-                                  : "bg-ink-100 text-ink-400"
+                                  : "bg-ink-100 text-ink-500"
                             }`}
                           >
                             {code}

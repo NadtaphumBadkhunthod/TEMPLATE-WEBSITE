@@ -122,7 +122,7 @@ export default async function DashboardPage() {
                           new
                         </span>
                       )}
-                      <span className="shrink-0 text-xs text-ink-400">
+                      <span className="shrink-0 text-xs text-ink-500">
                         {formatDateTime(quote.createdAt, locale)}
                       </span>
                     </Link>
@@ -148,7 +148,7 @@ export default async function DashboardPage() {
                   className={
                     entry.missing > 0
                       ? "font-medium text-amber-700"
-                      : "text-ink-400"
+                      : "text-ink-500"
                   }
                 >
                   {entry.missing}

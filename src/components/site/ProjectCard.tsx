@@ -29,7 +29,7 @@ export function ProjectCard({
             className="size-full object-cover transition duration-300 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="grid size-full place-items-center text-brand-200">
+          <div className="grid size-full place-items-center text-brand-400">
             <svg
               width="40"
               height="40"

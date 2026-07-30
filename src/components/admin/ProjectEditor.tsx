@@ -558,7 +558,7 @@ function Labelled({
         {label}
       </label>
       {children}
-      {hint && <p className="mt-1 text-xs text-ink-400">{hint}</p>}
+      {hint && <p className="mt-1 text-xs text-ink-500">{hint}</p>}
     </div>
   );
 }

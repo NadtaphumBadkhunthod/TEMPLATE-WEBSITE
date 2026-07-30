@@ -148,7 +148,7 @@ export default async function AdminFieldsPage({
                 required
                 className={`${inputClass} font-mono text-xs`}
               />
-              <p className="mt-1 text-xs text-ink-400">
+              <p className="mt-1 text-xs text-ink-500">
                 Stored as a JSON key. Letters, digits and underscores.
               </p>
             </div>
@@ -178,7 +178,7 @@ export default async function AdminFieldsPage({
                 placeholder="lora, nbiot, wifi"
                 className={inputClass}
               />
-              <p className="mt-1 text-xs text-ink-400">
+              <p className="mt-1 text-xs text-ink-500">
                 Comma-separated values. Labels per language are set below.
               </p>
             </div>

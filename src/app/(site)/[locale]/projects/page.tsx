@@ -170,7 +170,7 @@ export default async function ProjectsPage({
               ← {t("projects.previous")}
             </Link>
           ) : (
-            <span className="rounded-lg border border-ink-100 px-4 py-2 text-ink-300">
+            <span className="rounded-lg border border-ink-100 px-4 py-2 text-ink-500">
               ← {t("projects.previous")}
             </span>
           )}
@@ -190,7 +190,7 @@ export default async function ProjectsPage({
               {t("projects.next")} →
             </Link>
           ) : (
-            <span className="rounded-lg border border-ink-100 px-4 py-2 text-ink-300">
+            <span className="rounded-lg border border-ink-100 px-4 py-2 text-ink-500">
               {t("projects.next")} →
             </span>
           )}

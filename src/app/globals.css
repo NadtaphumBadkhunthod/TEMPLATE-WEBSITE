@@ -35,7 +35,15 @@
   --color-accent-600: #b8ae00;
   --color-accent-700: #8a8300;
 
-  /* Neutrals tuned to the reference site's warm-grey text and section bands. */
+  /*
+   * Neutrals tuned to the reference site's greys and section bands.
+   *
+   * Contrast rule for this ramp: ink-500 is the LIGHTEST grey usable as text.
+   * It clears 4.5:1 on both white (5.0:1) and the ink-50 section band (4.7:1).
+   * ink-50 … ink-400 are backgrounds, borders and dividers ONLY — ink-400 as
+   * text on white is 2.8:1 and ink-300 is 1.6:1, which is why secondary copy
+   * using them was hard to read. Secondary text: ink-500. Body text: ink-600+.
+   */
   --color-ink-50: #f7f7f7;
   --color-ink-100: #f0f0f0;
   --color-ink-200: #e2e2e2;

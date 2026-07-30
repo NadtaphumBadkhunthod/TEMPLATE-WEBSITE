@@ -97,7 +97,7 @@ export function CategoryManager({ categories }: { categories: CategoryRow[] }) {
                   ) : (
                     <span
                       title="Remove it from all projects first"
-                      className="text-xs text-ink-300"
+                      className="text-xs text-ink-500"
                     >
                       In use
                     </span>

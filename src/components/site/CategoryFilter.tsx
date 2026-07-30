@@ -59,7 +59,7 @@ export function CategoryFilter({
             {category.name}
             <span
               className={`ml-1.5 text-xs ${
-                isSelected ? "text-accent-400" : "text-ink-400"
+                isSelected ? "text-accent-400" : "text-ink-500"
               }`}
             >
               {category.count}

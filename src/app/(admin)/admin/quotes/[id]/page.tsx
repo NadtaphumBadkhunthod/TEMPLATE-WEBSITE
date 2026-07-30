@@ -135,7 +135,7 @@ export default async function QuoteDetailPage({
                   className="rounded-lg border border-ink-200 bg-ink-50 p-3 text-sm"
                 >
                   <p className="whitespace-pre-wrap text-ink-800">{note.body}</p>
-                  <p className="mt-1.5 text-xs text-ink-400">
+                  <p className="mt-1.5 text-xs text-ink-500">
                     {note.author?.name ?? "—"} ·{" "}
                     {formatDateTime(note.createdAt, locale)}
                   </p>
