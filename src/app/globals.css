@@ -71,44 +71,60 @@
   --radius-card: 0.375rem;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
-}
+/*
+ * These MUST stay inside `@layer base`.
+ *
+ * Unlayered CSS beats every layered rule in the cascade, no matter how specific
+ * the layered one is — and Tailwind's utilities live in `@layer utilities`. When
+ * the heading rule below sat outside a layer, its `color` overrode `text-white`
+ * on every heading, so an <h1> on a navy hero rendered navy-on-navy. Declaring
+ * it in `base` puts it before `utilities` in the layer order (theme, base,
+ * components, utilities), so a `text-*` utility overrides it as intended.
+ */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
 
-body {
-  font-family: var(--font-sans);
-  background-color: var(--color-white);
-  color: var(--color-ink-700);
-  line-height: 1.65;
-}
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-white);
+    color: var(--color-ink-700);
+    line-height: 1.65;
+  }
 
-/* Headings carry the display face; body copy stays on the text face. */
-:where(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--font-display);
-  color: var(--color-brand-800);
-  letter-spacing: -0.01em;
-}
+  /*
+   * Headings carry the display face; body copy stays on the text face. The
+   * colour here is only a default for headings that set none of their own —
+   * anything on a dark background is expected to override it with `text-white`.
+   */
+  :where(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--font-display);
+    color: var(--color-brand-800);
+    letter-spacing: -0.01em;
+  }
 
-/* Thai text needs a touch more leading than Latin to stay readable. */
-html[lang="th"] body {
-  line-height: 1.8;
-}
+  /* Thai text needs a touch more leading than Latin to stay readable. */
+  html[lang="th"] body {
+    line-height: 1.8;
+  }
 
-/* Kanit's Thai glyphs sit tall; -0.01em tracking crowds them. */
-html[lang="th"] :where(h1, h2, h3, h4, h5, h6) {
-  letter-spacing: 0;
-}
+  /* Kanit's Thai glyphs sit tall; -0.01em tracking crowds them. */
+  html[lang="th"] :where(h1, h2, h3, h4, h5, h6) {
+    letter-spacing: 0;
+  }
 
-::selection {
-  background-color: var(--color-accent-200);
-  color: var(--color-brand-900);
-}
+  ::selection {
+    background-color: var(--color-accent-200);
+    color: var(--color-brand-900);
+  }
 
-/* Consistent focus ring for keyboard users across the whole app. */
-:where(a, button, input, select, textarea, summary):focus-visible {
-  outline: 2px solid var(--color-brand-500);
-  outline-offset: 2px;
-  border-radius: 4px;
+  /* Consistent focus ring for keyboard users across the whole app. */
+  :where(a, button, input, select, textarea, summary):focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 }
 
 @layer components {
@@ -228,8 +244,14 @@ html[lang="th"] :where(h1, h2, h3, h4, h5, h6) {
   }
 }
 
-/* Admin tables get a tighter rhythm than the marketing pages. */
-.admin-body {
-  line-height: 1.5;
-  background-color: var(--color-ink-50);
+@layer base {
+  /*
+   * Admin tables get a tighter rhythm than the marketing pages. Layered for the
+   * same reason as the rules above — unlayered, this background would win over
+   * any `bg-*` utility placed on the admin body.
+   */
+  .admin-body {
+    line-height: 1.5;
+    background-color: var(--color-ink-50);
+  }
 }
