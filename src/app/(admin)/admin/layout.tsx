@@ -5,6 +5,7 @@ import { AdminNav } from "@/components/admin/AdminNav";
 import { getTranslator } from "@/i18n";
 import { getCurrentUser } from "@/lib/auth";
 import { getAdminLocale } from "@/lib/admin-locale";
+import { fontVariables } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -27,14 +28,14 @@ export default async function AdminLayout({
   // The login page shares this root layout but must not render the shell.
   if (!user) {
     return (
-      <html lang={locale}>
+      <html lang={locale} className={fontVariables}>
         <body className="admin-body">{children}</body>
       </html>
     );
   }
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className={fontVariables}>
       <body className="admin-body">
         <div className="flex min-h-screen">
           <AdminNav
@@ -49,7 +50,6 @@ export default async function AdminLayout({
               quotes: t("admin.quotes"),
               fields: t("admin.fields"),
               settings: t("admin.settings"),
-              users: t("admin.users"),
               viewSite: t("admin.viewSite"),
               signOut: t("admin.signOut"),
             }}

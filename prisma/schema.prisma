@@ -28,6 +28,7 @@ enum MediaKind {
   image
   document
   video
+  audio
   other
 }
 

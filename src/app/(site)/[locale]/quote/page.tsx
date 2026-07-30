@@ -48,13 +48,15 @@ export default async function QuotePage({
     <div className="container-page py-14">
       <div className="mx-auto max-w-2xl">
         <header>
-          <h1 className="text-3xl font-bold tracking-tight text-ink-900 sm:text-4xl">
-            {t("quote.title")}
-          </h1>
-          <p className="mt-3 text-ink-500">{t("quote.subtitle")}</p>
+          <div className="heading-rule">
+            <h1 className="text-3xl font-bold sm:text-4xl">
+              {t("quote.title")}
+            </h1>
+          </div>
+          <p className="mt-5 text-ink-500">{t("quote.subtitle")}</p>
         </header>
 
-        <div className="mt-10 rounded-[--radius-card] border border-ink-200 p-6 sm:p-8">
+        <div className="mt-10 border-t-4 border-accent-400 border-x border-b border-x-ink-200 border-b-ink-200 bg-white p-6 shadow-[0_10px_30px_-18px_rgba(23,59,107,0.4)] sm:p-8">
           {form && form.fields.length > 0 ? (
             <QuoteForm
               locale={locale}

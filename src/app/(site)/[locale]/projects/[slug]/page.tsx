@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { AttachmentList } from "@/components/site/AttachmentList";
 import { BlockRenderer } from "@/components/site/BlockRenderer";
 import { Gallery } from "@/components/site/Gallery";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
@@ -15,7 +16,6 @@ import {
   getRelatedProjects,
   type ProjectDetail,
 } from "@/lib/content";
-import { formatFileSize } from "@/lib/format";
 import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
@@ -100,7 +100,7 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
       </div>
 
       {!project.isTranslated && (
-        <p className="mt-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-6 border-l-[3px] border-amber-400 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           {t("project.notTranslated")}
         </p>
       )}
@@ -112,18 +112,19 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
               <Link
                 key={category.id}
                 href={`/${locale}/projects?category=${encodeURIComponent(category.slug)}`}
-                className="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700 hover:bg-brand-100"
+                className="bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700 transition hover:bg-brand-100"
               >
                 {category.name}
               </Link>
             ))}
           </div>
         )}
-        <h1 className="mt-4 text-3xl font-bold tracking-tight text-ink-900 sm:text-4xl">
-          {project.title}
-        </h1>
+        <h1 className="mt-4 text-3xl font-bold sm:text-4xl">{project.title}</h1>
+        <div aria-hidden className="mt-5 h-1 w-14 bg-accent-400" />
         {project.summary && (
-          <p className="mt-4 text-lg text-ink-600">{project.summary}</p>
+          <p className="mt-5 text-lg leading-relaxed text-ink-600">
+            {project.summary}
+          </p>
         )}
       </header>
 
@@ -137,10 +138,12 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 
           {project.body.length > 0 && (
             <section>
-              <h2 className="text-xl font-semibold text-ink-900">
-                {t("project.overview")}
-              </h2>
-              <div className="mt-3">
+              <div className="heading-rule">
+                <h2 className="text-xl font-semibold">
+                  {t("project.overview")}
+                </h2>
+              </div>
+              <div className="mt-5">
                 <BlockRenderer blocks={project.body} />
               </div>
             </section>
@@ -148,18 +151,20 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 
           {project.features.length > 0 && (
             <section className="mt-10">
-              <h2 className="text-xl font-semibold text-ink-900">
-                {t("project.features")}
-              </h2>
-              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="heading-rule">
+                <h2 className="text-xl font-semibold">
+                  {t("project.features")}
+                </h2>
+              </div>
+              <ul className="mt-5 grid gap-3 sm:grid-cols-2">
                 {project.features.map((feature, index) => (
                   <li
                     key={index}
-                    className="flex gap-3 rounded-lg border border-ink-200 bg-ink-50/60 p-4 text-sm text-ink-700"
+                    className="flex gap-3 border-l-[3px] border-accent-400 bg-ink-50 p-4 text-sm text-ink-700"
                   >
                     <span
                       aria-hidden
-                      className="mt-0.5 shrink-0 text-brand-600"
+                      className="mt-0.5 shrink-0 font-bold text-brand-600"
                     >
                       ✓
                     </span>
@@ -172,10 +177,12 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
 
           {project.specs.length > 0 && (
             <section className="mt-10">
-              <h2 className="text-xl font-semibold text-ink-900">
-                {t("project.specifications")}
-              </h2>
-              <dl className="mt-4 divide-y divide-ink-200 rounded-lg border border-ink-200">
+              <div className="heading-rule">
+                <h2 className="text-xl font-semibold">
+                  {t("project.specifications")}
+                </h2>
+              </div>
+              <dl className="mt-5 divide-y divide-ink-200 border border-ink-200">
                 {project.specs.map((spec) => (
                   <div
                     key={spec.key}
@@ -190,53 +197,36 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
               </dl>
             </section>
           )}
+
+          {/*
+            Downloads live in the main column rather than the sidebar: they are a
+            headline feature of a project page, and audio/video players need the
+            width.
+          */}
+          {project.attachments.length > 0 && (
+            <section className="mt-10">
+              <div className="heading-rule">
+                <h2 className="text-xl font-semibold">
+                  {t("project.attachments")}
+                </h2>
+              </div>
+              <AttachmentList attachments={project.attachments} t={t} />
+            </section>
+          )}
         </div>
 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
           {settings.modules.quote && (
             <EnquiryCard project={project} locale={locale} t={t} />
           )}
-
-          {project.attachments.length > 0 && (
-            <section className="rounded-[--radius-card] border border-ink-200 p-5">
-              <h2 className="text-sm font-semibold text-ink-900">
-                {t("project.attachments")}
-              </h2>
-              <ul className="mt-3 space-y-2">
-                {project.attachments.map((file) => (
-                  <li key={file.id}>
-                    <a
-                      href={file.url}
-                      target={file.isExternal ? "_blank" : undefined}
-                      rel={file.isExternal ? "noopener noreferrer" : undefined}
-                      download={file.isExternal ? undefined : ""}
-                      className="flex items-center gap-3 rounded-lg border border-ink-200 px-3 py-2.5 text-sm text-ink-700 transition hover:border-brand-300 hover:text-brand-700"
-                    >
-                      <span aria-hidden className="text-ink-400">
-                        {file.isExternal ? "↗" : "↓"}
-                      </span>
-                      <span className="min-w-0 flex-1 truncate">
-                        {file.label}
-                      </span>
-                      {file.sizeBytes ? (
-                        <span className="shrink-0 text-xs text-ink-400">
-                          {formatFileSize(file.sizeBytes)}
-                        </span>
-                      ) : null}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
         </aside>
       </div>
 
       {related.length > 0 && (
         <section className="mt-20 border-t border-ink-200 pt-12">
-          <h2 className="text-2xl font-bold text-ink-900">
-            {t("project.related")}
-          </h2>
+          <div className="heading-rule">
+            <h2 className="text-2xl font-bold">{t("project.related")}</h2>
+          </div>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
               <ProjectCard key={item.id} project={item} locale={locale} />
@@ -258,15 +248,17 @@ function EnquiryCard({
   t: ReturnType<typeof getTranslator>;
 }) {
   return (
-    <div className="rounded-[--radius-card] border border-ink-200 bg-ink-50/60 p-5">
-      <p className="text-base font-semibold text-ink-900">
+    <div className="border-t-4 border-accent-400 bg-brand-800 p-6 text-white">
+      <p className="font-display text-lg font-semibold text-white">
         {t("project.enquiry")}
       </p>
-      <p className="mt-1 text-sm text-ink-500">{t("project.enquiryBody")}</p>
+      <p className="mt-2 text-sm leading-relaxed text-white/75">
+        {t("project.enquiryBody")}
+      </p>
 
       <Link
         href={`/${locale}/quote?project=${encodeURIComponent(project.slug)}`}
-        className="mt-4 block rounded-lg bg-brand-600 px-4 py-3 text-center font-medium text-white transition hover:bg-brand-700"
+        className="btn btn-accent mt-5 w-full"
       >
         {t("project.requestQuote")}
       </Link>

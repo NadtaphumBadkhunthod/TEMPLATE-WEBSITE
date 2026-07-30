@@ -53,6 +53,11 @@ export function MediaUploader() {
         hidden
         onChange={(event) => upload(event.target.files)}
       />
+      <p className="mt-2 text-xs text-ink-500">
+        Any document, image, audio or video file — PDF, Word, Excel,
+        PowerPoint, MP3, MP4, ZIP and so on. Executables and scripts are
+        blocked.
+      </p>
       {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
     </div>
   );

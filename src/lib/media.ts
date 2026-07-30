@@ -1,5 +1,13 @@
 import path from "node:path";
 
+import { checkUploadAllowed as check, type UploadCheck } from "./file-types";
+
+/*
+ * Disk-facing media helpers. Anything pure lives in `file-types.ts` so the
+ * client-side media picker can share it — this module imports `node:path` and
+ * therefore cannot be pulled into a client component.
+ */
+
 export type MediaLike = {
   id: string;
   storageKey: string | null;
@@ -31,35 +39,18 @@ export function resolveStoredPath(storageKey: string): string | null {
   return target;
 }
 
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
-
-export function kindForMime(mime: string): "image" | "document" | "video" | "other" {
-  if (IMAGE_TYPES.includes(mime)) return "image";
-  if (mime.startsWith("video/")) return "video";
-  if (
-    mime === "application/pdf" ||
-    mime.startsWith("application/vnd") ||
-    mime.startsWith("application/msword") ||
-    mime === "text/plain" ||
-    mime === "application/zip"
-  ) {
-    return "document";
-  }
-  return "other";
+/** Reads the env escape hatch here so `file-types.ts` stays environment-free. */
+export function checkUploadAllowed(fileName: string): UploadCheck {
+  return check(fileName, process.env.UPLOAD_ALLOW_ALL_TYPES === "true");
 }
 
-export const ALLOWED_UPLOAD_TYPES = [
-  ...IMAGE_TYPES,
-  "application/pdf",
-  "application/zip",
-  "text/plain",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "application/vnd.ms-excel",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-];
-
-export const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
+/** Configurable so a deployment can raise it without a code change. */
+export function maxUploadBytes(): number {
+  const configured = Number(process.env.UPLOAD_MAX_MB);
+  const megabytes =
+    Number.isFinite(configured) && configured > 0 ? configured : 100;
+  return Math.floor(megabytes * 1024 * 1024);
+}
 
 /** Safe, collision-resistant on-disk name; the original is kept in the DB. */
 export function storageKeyFor(originalName: string): string {
@@ -69,3 +60,11 @@ export function storageKeyFor(originalName: string): string {
   const rand = Math.random().toString(36).slice(2, 10);
   return `${stamp}-${rand}${safeExt}`;
 }
+
+export {
+  extensionLabel,
+  extensionOf,
+  isInlineSafeMime,
+  kindForMime,
+  type MediaKindName,
+} from "./file-types";

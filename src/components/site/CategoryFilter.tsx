@@ -30,10 +30,10 @@ export function CategoryFilter({
       <Link
         href={hrefWith([])}
         aria-current={selected.length === 0}
-        className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+        className={`border px-4 py-1.5 text-sm font-medium transition ${
           selected.length === 0
-            ? "border-brand-600 bg-brand-600 text-white"
-            : "border-ink-200 bg-white text-ink-600 hover:border-brand-300 hover:text-brand-700"
+            ? "border-brand-700 bg-brand-700 text-white"
+            : "border-ink-200 bg-white text-ink-600 hover:border-brand-400 hover:text-brand-700"
         }`}
       >
         {t("projects.allCategories")}
@@ -50,16 +50,16 @@ export function CategoryFilter({
             key={category.id}
             href={hrefWith(next)}
             aria-current={isSelected}
-            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+            className={`border px-4 py-1.5 text-sm font-medium transition ${
               isSelected
-                ? "border-brand-600 bg-brand-600 text-white"
-                : "border-ink-200 bg-white text-ink-600 hover:border-brand-300 hover:text-brand-700"
+                ? "border-brand-700 bg-brand-700 text-white"
+                : "border-ink-200 bg-white text-ink-600 hover:border-brand-400 hover:text-brand-700"
             }`}
           >
             {category.name}
             <span
               className={`ml-1.5 text-xs ${
-                isSelected ? "text-brand-100" : "text-ink-400"
+                isSelected ? "text-accent-400" : "text-ink-400"
               }`}
             >
               {category.count}

@@ -2,6 +2,8 @@
 
 import { useRef, useState } from "react";
 
+import { extensionLabel } from "@/lib/file-types";
+
 export type MediaOption = {
   id: string;
   url: string;
@@ -131,11 +133,17 @@ export function MediaPicker({
                       className="aspect-square w-full object-cover"
                     />
                   ) : (
-                    <span className="flex aspect-square w-full flex-col items-center justify-center gap-1 p-2 text-center">
-                      <span aria-hidden className="text-xl text-ink-400">
-                        ⎙
+                    <span className="flex aspect-square w-full flex-col items-center justify-center gap-1.5 p-2 text-center">
+                      <span
+                        aria-hidden
+                        className="grid h-7 w-11 place-items-center bg-brand-700 text-[9px] font-bold text-white"
+                      >
+                        {extensionLabel(
+                          asset.originalName,
+                          asset.mimeType,
+                        ).slice(0, 5)}
                       </span>
-                      <span className="line-clamp-2 text-[10px] text-ink-500">
+                      <span className="line-clamp-2 break-all text-[10px] text-ink-500">
                         {asset.originalName}
                       </span>
                     </span>

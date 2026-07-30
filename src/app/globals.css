@@ -5,33 +5,62 @@
  * different client should be a matter of editing this block.
  */
 @theme {
-  --color-brand-50: oklch(0.97 0.02 200);
-  --color-brand-100: oklch(0.93 0.04 200);
-  --color-brand-200: oklch(0.87 0.07 200);
-  --color-brand-300: oklch(0.79 0.1 200);
-  --color-brand-400: oklch(0.7 0.13 200);
-  --color-brand-500: oklch(0.62 0.14 200);
-  --color-brand-600: oklch(0.53 0.13 202);
-  --color-brand-700: oklch(0.44 0.11 204);
-  --color-brand-800: oklch(0.36 0.09 206);
-  --color-brand-900: oklch(0.29 0.07 208);
+  /*
+   * Brand: deep institutional navy. Anchored on the Smart City Office palette
+   * — brand-700 and brand-800 are the two navies the reference site leans on
+   * for its nav bar and section headers.
+   */
+  --color-brand-50: #eef3f9;
+  --color-brand-100: #d8e3f0;
+  --color-brand-200: #b3c7e0;
+  --color-brand-300: #85a5cc;
+  --color-brand-400: #5480b4;
+  --color-brand-500: #2f5f97;
+  --color-brand-600: #1f4b7d;
+  --color-brand-700: #173b6b;
+  --color-brand-800: #0c2f53;
+  --color-brand-900: #07203a;
 
-  --color-ink-50: oklch(0.98 0.003 250);
-  --color-ink-100: oklch(0.96 0.004 250);
-  --color-ink-200: oklch(0.92 0.006 250);
-  --color-ink-300: oklch(0.85 0.008 250);
-  --color-ink-400: oklch(0.68 0.012 250);
-  --color-ink-500: oklch(0.55 0.014 250);
-  --color-ink-600: oklch(0.44 0.014 250);
-  --color-ink-700: oklch(0.35 0.013 250);
-  --color-ink-800: oklch(0.26 0.012 250);
-  --color-ink-900: oklch(0.19 0.011 250);
+  /*
+   * Accent: the signature yellow. Used sparingly and always on navy or white —
+   * accent-400 on white fails contrast for text, so it is a fill/rule colour,
+   * never a text colour. Navy text on accent-400 passes AA comfortably.
+   */
+  --color-accent-50: #fffde6;
+  --color-accent-100: #fffbb8;
+  --color-accent-200: #fff76b;
+  --color-accent-300: #fff53d;
+  --color-accent-400: #fff200;
+  --color-accent-500: #e6da00;
+  --color-accent-600: #b8ae00;
+  --color-accent-700: #8a8300;
 
+  /* Neutrals tuned to the reference site's warm-grey text and section bands. */
+  --color-ink-50: #f7f7f7;
+  --color-ink-100: #f0f0f0;
+  --color-ink-200: #e2e2e2;
+  --color-ink-300: #cfcfcf;
+  --color-ink-400: #9b9b9b;
+  --color-ink-500: #6f6f6f;
+  --color-ink-600: #4a4a4a;
+  --color-ink-700: #3a3a3a;
+  --color-ink-800: #2a2a2a;
+  --color-ink-900: #1a1a1a;
+
+  /*
+   * Kanit for headings, Sarabun for body — both carry full Thai and Latin
+   * coverage, so a Thai and an English page share one vertical rhythm. The
+   * --font-*-var values are injected by next/font in the site layout.
+   */
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans Thai",
-    "Leelawadee UI", "Sarabun", Tahoma, sans-serif;
+    var(--font-sarabun-var), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
+  --font-display:
+    var(--font-kanit-var), var(--font-sarabun-var), ui-sans-serif, system-ui,
+    "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
 
-  --radius-card: 0.875rem;
+  /* Squarer than the previous theme — the reference site is near-rectangular. */
+  --radius-card: 0.375rem;
 }
 
 html {
@@ -41,8 +70,15 @@ html {
 body {
   font-family: var(--font-sans);
   background-color: var(--color-white);
-  color: var(--color-ink-800);
+  color: var(--color-ink-700);
   line-height: 1.65;
+}
+
+/* Headings carry the display face; body copy stays on the text face. */
+:where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-display);
+  color: var(--color-brand-800);
+  letter-spacing: -0.01em;
 }
 
 /* Thai text needs a touch more leading than Latin to stay readable. */
@@ -50,8 +86,14 @@ html[lang="th"] body {
   line-height: 1.8;
 }
 
+/* Kanit's Thai glyphs sit tall; -0.01em tracking crowds them. */
+html[lang="th"] :where(h1, h2, h3, h4, h5, h6) {
+  letter-spacing: 0;
+}
+
 ::selection {
-  background-color: var(--color-brand-200);
+  background-color: var(--color-accent-200);
+  color: var(--color-brand-900);
 }
 
 /* Consistent focus ring for keyboard users across the whole app. */
@@ -93,9 +135,88 @@ html[lang="th"] body {
   .prose-block blockquote {
     margin-block: 1.2em;
     padding-inline-start: 1rem;
-    border-inline-start: 3px solid var(--color-brand-300);
+    border-inline-start: 3px solid var(--color-accent-400);
     color: var(--color-ink-600);
     font-style: italic;
+  }
+
+  /*
+   * The reference site's signature: a short yellow rule under each section
+   * heading. Applied to the wrapper, not the heading, so it survives wrapping.
+   */
+  .heading-rule::after {
+    content: "";
+    display: block;
+    width: 3.5rem;
+    height: 4px;
+    margin-top: 0.75rem;
+    background-color: var(--color-accent-400);
+  }
+
+  .heading-rule-center::after {
+    margin-inline: auto;
+  }
+
+  /* Alternating page bands, as on the reference site. */
+  .band-tint {
+    background-color: var(--color-ink-50);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    font-weight: 600;
+    font-family: var(--font-display);
+    border-radius: 3px;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease;
+  }
+
+  .btn-primary {
+    background-color: var(--color-brand-700);
+    color: var(--color-white);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-brand-800);
+  }
+
+  /* Navy on yellow — the reference site's loudest call to action. */
+  .btn-accent {
+    background-color: var(--color-accent-400);
+    color: var(--color-brand-800);
+  }
+
+  .btn-accent:hover {
+    background-color: var(--color-accent-300);
+  }
+
+  .btn-outline {
+    border: 2px solid var(--color-brand-700);
+    color: var(--color-brand-700);
+    background-color: transparent;
+  }
+
+  .btn-outline:hover {
+    background-color: var(--color-brand-700);
+    color: var(--color-white);
+  }
+
+  /* On the dark hero, an outline button needs light-on-dark treatment. */
+  .btn-outline-light {
+    border: 2px solid rgb(255 255 255 / 0.7);
+    color: var(--color-white);
+    background-color: transparent;
+  }
+
+  .btn-outline-light:hover {
+    background-color: var(--color-white);
+    color: var(--color-brand-800);
   }
 }
 

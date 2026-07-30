@@ -5,6 +5,7 @@ import "../../globals.css";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { isLocale, locales, type Locale } from "@/i18n/config";
+import { fontVariables } from "@/lib/fonts";
 import { getSettings, pick } from "@/lib/settings";
 
 export async function generateStaticParams() {
@@ -50,10 +51,18 @@ export default async function SiteLayout({
   if (!isLocale(locale)) notFound();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className={fontVariables}>
       <body className="flex min-h-screen flex-col bg-white">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-brand-800 focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white"
+        >
+          {locale === "th" ? "ข้ามไปยังเนื้อหาหลัก" : "Skip to main content"}
+        </a>
         <SiteHeader locale={locale as Locale} />
-        <main className="flex-1">{children}</main>
+        <main id="main" className="flex-1">
+          {children}
+        </main>
         <SiteFooter locale={locale as Locale} />
       </body>
     </html>

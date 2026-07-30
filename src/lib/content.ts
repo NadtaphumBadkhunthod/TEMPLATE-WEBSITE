@@ -25,6 +25,12 @@ export type ProjectCategoryView = {
 export type AttachmentView = {
   id: string;
   label: string;
+  /**
+   * The uploaded file's own name, kept alongside the display label so the UI can
+   * derive a file-type badge from the real extension — the label is free text
+   * the admin wrote and usually has no extension in it.
+   */
+  fileName: string | null;
   url: string;
   isExternal: boolean;
   mimeType: string | null;
@@ -271,6 +277,7 @@ export async function getProjectBySlug(
       return {
         id: m.id,
         label: m.label || m.media.originalName || t("project.download"),
+        fileName: m.media.originalName,
         url,
         isExternal: !!m.media.externalUrl,
         mimeType: m.media.mimeType,

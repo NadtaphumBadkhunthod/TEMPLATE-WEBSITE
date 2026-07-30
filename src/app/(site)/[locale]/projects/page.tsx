@@ -80,10 +80,12 @@ export default async function ProjectsPage({
   return (
     <div className="container-page py-14">
       <header className="max-w-2xl">
-        <h1 className="text-3xl font-bold tracking-tight text-ink-900 sm:text-4xl">
-          {t("projects.title")}
-        </h1>
-        <p className="mt-3 text-ink-500">{t("projects.subtitle")}</p>
+        <div className="heading-rule">
+          <h1 className="text-3xl font-bold sm:text-4xl">
+            {t("projects.title")}
+          </h1>
+        </div>
+        <p className="mt-5 text-ink-500">{t("projects.subtitle")}</p>
       </header>
 
       {categories.length > 0 && (

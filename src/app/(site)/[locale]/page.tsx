@@ -35,26 +35,53 @@ export default async function HomePage({
 
   return (
     <>
-      <section className="border-b border-ink-200 bg-gradient-to-b from-brand-50/60 to-white">
+      {/*
+        Dark banner hero. The reference site uses a cityscape photo behind a navy
+        scrim; there is no site-wide hero image in settings yet, so this builds
+        the same depth from gradients — it reads as deliberate rather than as a
+        missing image, and swapping in a photo later means one background rule.
+      */}
+      <section className="relative isolate overflow-hidden bg-brand-800">
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(ellipse at top right, rgba(47,95,151,0.55), transparent 60%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
+            backgroundSize: "64px 64px",
+          }}
+        />
         <div className="container-page py-20 lg:py-28">
           <div className="max-w-3xl">
-            <h1 className="text-4xl font-bold leading-tight tracking-tight text-ink-900 sm:text-5xl">
+            <span className="inline-block bg-accent-400 px-3 py-1 font-display text-xs font-semibold uppercase tracking-wider text-brand-800">
+              {pick(settings.site.name, locale)}
+            </span>
+            <h1 className="mt-6 font-display text-4xl font-bold leading-tight text-white sm:text-5xl">
               {pick(settings.hero.title, locale)}
             </h1>
-            <p className="mt-5 text-lg text-ink-600">
+            <div aria-hidden className="mt-6 h-1 w-20 bg-accent-400" />
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">
               {pick(settings.hero.subtitle, locale)}
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-9 flex flex-wrap gap-3">
               <Link
                 href={`/${locale}/projects`}
-                className="rounded-lg bg-brand-600 px-6 py-3 font-medium text-white transition hover:bg-brand-700"
+                className="btn btn-accent"
               >
                 {pick(settings.hero.ctaLabel, locale)}
               </Link>
               {settings.modules.quote && (
                 <Link
                   href={`/${locale}/quote`}
-                  className="rounded-lg border border-ink-300 bg-white px-6 py-3 font-medium text-ink-700 transition hover:border-brand-400 hover:text-brand-700"
+                  className="btn btn-outline-light"
                 >
                   {t("nav.quote")}
                 </Link>
@@ -68,16 +95,21 @@ export default async function HomePage({
         <section className="container-page py-20">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-ink-900 sm:text-3xl">
-                {t("home.featuredTitle")}
-              </h2>
-              <p className="mt-2 text-ink-500">{t("home.featuredSubtitle")}</p>
+              <div className="heading-rule">
+                <h2 className="text-2xl font-bold sm:text-3xl">
+                  {t("home.featuredTitle")}
+                </h2>
+              </div>
+              <p className="mt-4 text-ink-500">{t("home.featuredSubtitle")}</p>
             </div>
             <Link
               href={`/${locale}/projects`}
-              className="text-sm font-medium text-brand-700 hover:text-brand-800"
+              className="group text-sm font-semibold text-brand-700 transition hover:text-brand-800"
             >
-              {t("home.viewAll")} →
+              {t("home.viewAll")}{" "}
+              <span className="inline-block transition group-hover:translate-x-1">
+                →
+              </span>
             </Link>
           </div>
 
@@ -90,13 +122,15 @@ export default async function HomePage({
       )}
 
       {categories.length > 0 && (
-        <section className="border-y border-ink-200 bg-ink-50">
+        <section className="band-tint border-y border-ink-200">
           <div className="container-page py-16">
-            <h2 className="text-2xl font-bold text-ink-900 sm:text-3xl">
-              {t("home.categoriesTitle")}
-            </h2>
-            <p className="mt-2 text-ink-500">{t("home.categoriesSubtitle")}</p>
-            <div className="mt-6">
+            <div className="heading-rule">
+              <h2 className="text-2xl font-bold sm:text-3xl">
+                {t("home.categoriesTitle")}
+              </h2>
+            </div>
+            <p className="mt-4 text-ink-500">{t("home.categoriesSubtitle")}</p>
+            <div className="mt-7">
               <CategoryFilter
                 categories={categories}
                 selected={[]}
@@ -109,18 +143,25 @@ export default async function HomePage({
       )}
 
       {settings.modules.quote && (
-        <section className="container-page py-20">
-          <div className="rounded-2xl bg-ink-900 px-8 py-14 text-center sm:px-16">
-            <h2 className="text-2xl font-bold text-white sm:text-3xl">
-              {t("home.ctaTitle")}
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-ink-300">
+        <section className="relative isolate overflow-hidden bg-brand-700">
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10"
+            style={{
+              backgroundImage:
+                "radial-gradient(ellipse at bottom left, rgba(12,47,83,0.7), transparent 65%)",
+            }}
+          />
+          <div className="container-page py-16 text-center">
+            <div className="heading-rule heading-rule-center">
+              <h2 className="text-2xl font-bold text-white sm:text-3xl">
+                {t("home.ctaTitle")}
+              </h2>
+            </div>
+            <p className="mx-auto mt-5 max-w-xl text-white/80">
               {t("home.ctaBody")}
             </p>
-            <Link
-              href={`/${locale}/quote`}
-              className="mt-8 inline-block rounded-lg bg-brand-500 px-6 py-3 font-medium text-white transition hover:bg-brand-400"
-            >
+            <Link href={`/${locale}/quote`} className="btn btn-accent mt-8">
               {t("home.ctaButton")}
             </Link>
           </div>

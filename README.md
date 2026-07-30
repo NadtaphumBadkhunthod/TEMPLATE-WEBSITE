@@ -56,7 +56,10 @@ or change the password from the admin panel afterwards.
 - **Project listing** — multi-select category filter, sorting, pagination. Filters are
   plain links, so they are shareable and crawlable and work without JS.
 - **Project detail** — gallery, block description, feature list, specifications from
-  admin-defined custom fields, attachments, related projects, enquiry call-to-action
+  admin-defined custom fields, downloads, related projects, enquiry call-to-action
+- **Downloads** — every attachment is downloadable whatever the format (PDF, Word,
+  Excel, PowerPoint, MP3, MP4, ZIP, …), with a file-type badge and size. Audio and
+  video also get a native player
 - **Request a quote** — fields come from the database, not the code
 - **Bilingual** — `/th/…` and `/en/…`, per-locale slugs, hreflang + canonical tags,
   language switcher that resolves to the right document rather than swapping the prefix
@@ -106,12 +109,35 @@ built on this template needs prices, that is an additive change, not an un-picki
 `list`, `quote`) and rendered as real elements — nothing goes through
 `dangerouslySetInnerHTML`, so admin-entered text cannot inject markup.
 
+**Attachments.** Any file type is accepted. The upload check in
+`src/lib/file-types.ts` is a *denylist*, not an allowlist, so a format nobody
+anticipated needs no code change — only executables, installers, shell/script files
+and server-side sources are refused, because a public download link is exactly how
+such a file would get distributed. Office macro formats (`.xlsm`, `.docm`) are
+refused with a message pointing at the macro-free equivalent. Set
+`UPLOAD_ALLOW_ALL_TYPES=true` to lift this entirely, and `UPLOAD_MAX_MB` to change
+the 100MB default.
+
+Downloads are served through `/api/media/[id]`, which decides inline-vs-download per
+type: images, audio, video and PDFs render in the tab, everything else is sent as an
+attachment so an uploaded `.html` or `.svg` can never execute against this origin
+(both also get a locked-down CSP). `?download=1` forces a download of anything.
+The route supports HTTP Range requests, so seeking in an audio or video file works
+instead of refetching from the start, and filenames are emitted with RFC 5987
+encoding so Thai names survive.
+
 ---
 
 ## Re-using this for another client
 
 1. **Theme** — every colour, font and radius is in the `@theme` block at the top of
-   `src/app/globals.css`.
+   `src/app/globals.css`. The current skin follows Thailand's Smart City Office
+   site: navy `#173b6b` with a yellow `#fff200` accent, squared corners, Kanit for
+   headings and Sarabun for body text (both cover Thai and Latin, so the two
+   locales share one vertical rhythm). Swap the `--color-brand-*` and
+   `--color-accent-*` ramps and the whole site follows. Note that `accent-400` is a
+   fill and rule colour only — it fails contrast as text on white, so keep it behind
+   navy text rather than on it.
 2. **Content** — all in Postgres. A new site is a fresh database plus a seed.
 3. **Modules** — toggle in Settings.
 4. **Domain vocabulary** — lives in `field_definitions` rows, not in the schema.
@@ -145,14 +171,18 @@ A few places where this deviates from `docs/ARCHITECTURE.md`, all deliberate:
 
 - **Admin user management UI** — the seeded admin is the only account; adding more
   means a seed edit or a direct insert. The `admin_users` table and the `admin`/`editor`
-  role split are in place.
+  role split are in place. The sidebar deliberately has no "Users" entry, since
+  `/admin/users` does not exist — re-add it in `AdminNav.tsx` when it does.
+- **Image thumbnails and video posters** — uploads are stored and served as-is, so a
+  gallery of large photos ships full-size bytes to the browser.
+- **Virus scanning** — uploads are type-checked, not scanned. Worth adding a
+  ClamAV or hosted-scanner pass before accepting files from anyone but staff.
 - **Email notifications** — `settings.quote.notifyEmails` is stored and editable, but
   nothing sends yet. There is a marked `TODO` in `src/app/actions/quote.ts`.
 - **Homepage/CMS page editing** — the `pages` tables exist; homepage copy is currently
   edited through Settings rather than a block-based page builder.
 - **Rate limiting is in-process** — fine for one instance, needs Redis (or Cloudflare
   Turnstile) before running behind more than one node.
-- **Image derivatives** — uploads are stored as-is; no thumbnail generation.
 
 ### Before production
 

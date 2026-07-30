@@ -21,24 +21,23 @@ export default async function ThankYouPage({
       <div className="mx-auto max-w-lg text-center">
         <div
           aria-hidden
-          className="mx-auto grid size-14 place-items-center rounded-full bg-brand-100 text-2xl text-brand-700"
+          className="mx-auto grid size-14 place-items-center bg-accent-400 text-2xl font-bold text-brand-800"
         >
           ✓
         </div>
-        <h1 className="mt-6 text-3xl font-bold tracking-tight text-ink-900">
-          {t("thankYou.title")}
-        </h1>
-        <p className="mt-3 text-ink-500">{t("thankYou.body")}</p>
+        <h1 className="mt-6 text-3xl font-bold">{t("thankYou.title")}</h1>
+        <div aria-hidden className="mx-auto mt-5 h-1 w-14 bg-accent-400" />
+        <p className="mt-5 text-ink-500">{t("thankYou.body")}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link
             href={`/${locale}`}
-            className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700"
+            className="btn btn-primary px-5 py-2.5 text-sm"
           >
             {t("thankYou.backHome")}
           </Link>
           <Link
             href={`/${locale}/projects`}
-            className="rounded-lg border border-ink-300 px-5 py-2.5 text-sm font-medium text-ink-700 transition hover:border-brand-400"
+            className="btn btn-outline px-5 py-2.5 text-sm"
           >
             {t("thankYou.browseProjects")}
           </Link>

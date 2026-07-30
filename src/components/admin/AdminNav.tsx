@@ -14,7 +14,6 @@ type Labels = {
   quotes: string;
   fields: string;
   settings: string;
-  users: string;
   viewSite: string;
   signOut: string;
 };
@@ -45,11 +44,11 @@ export function AdminNav({
     {
       items: [
         { href: "/admin/fields", label: labels.fields },
+        // No Users entry: account management has no page yet, and linking to a
+        // 404 from the main nav is worse than leaving it out. Restore it here
+        // when /admin/users exists.
         ...(role === "admin"
-          ? [
-              { href: "/admin/settings", label: labels.settings },
-              { href: "/admin/users", label: labels.users },
-            ]
+          ? [{ href: "/admin/settings", label: labels.settings }]
           : []),
       ],
     },
