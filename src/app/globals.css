@@ -3,83 +3,102 @@
 /*
  * Theme tokens live here and nowhere else. Re-skinning this template for a
  * different client should be a matter of editing this block.
+ *
+ * This skin follows the NST Fair site: an electric blue that runs into cyan and
+ * teal through 135° gradients, an orange highlight, generous 16–20px radii and
+ * soft blue-tinted shadows instead of hard borders. Palette values were taken
+ * from that site's own stylesheet rather than sampled by eye.
  */
 @theme {
   /*
-   * Brand: deep institutional navy. Anchored on the Smart City Office palette
-   * — brand-700 and brand-800 are the two navies the reference site leans on
-   * for its nav bar and section headers.
+   * Brand: electric blue. brand-700 (#0119b9) is the anchor the reference site
+   * uses for links, headings and the start of every gradient. brand-900
+   * (#0a0e2e) is its near-black navy, used for headings and the footer.
    */
-  --color-brand-50: #eef3f9;
-  --color-brand-100: #d8e3f0;
-  --color-brand-200: #b3c7e0;
-  --color-brand-300: #85a5cc;
-  --color-brand-400: #5480b4;
-  --color-brand-500: #2f5f97;
-  --color-brand-600: #1f4b7d;
-  --color-brand-700: #173b6b;
-  --color-brand-800: #0c2f53;
-  --color-brand-900: #07203a;
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #dde4ff;
+  --color-brand-200: #b8c6ff;
+  --color-brand-300: #8b9fff;
+  --color-brand-400: #5a72f5;
+  --color-brand-500: #2a41e0;
+  --color-brand-600: #0f27cc;
+  --color-brand-700: #0119b9;
+  --color-brand-800: #011593;
+  --color-brand-900: #0a0e2e;
 
   /*
-   * Accent: the signature yellow. Used sparingly and always on navy or white —
-   * accent-400 on white fails contrast for text, so it is a fill/rule colour,
-   * never a text colour. Navy text on accent-400 passes AA comfortably.
+   * The two hues the brand gradient runs into. Flat tokens rather than ramps —
+   * they are only ever used as gradient stops and small fills, and naming them
+   * `aqua`/`jade` avoids colliding with Tailwind's built-in sky/teal palettes.
    */
-  --color-accent-50: #fffde6;
-  --color-accent-100: #fffbb8;
-  --color-accent-200: #fff76b;
-  --color-accent-300: #fff53d;
-  --color-accent-400: #fff200;
-  --color-accent-500: #e6da00;
-  --color-accent-600: #b8ae00;
-  --color-accent-700: #8a8300;
+  --color-aqua-400: #4fb6e4;
+  --color-aqua-500: #29a4dd;
+  --color-aqua-600: #1d8bc0;
+  /* Deep enough to carry white text at 4.5:1 — see .grad-action below. */
+  --color-aqua-700: #1a7fa8;
+  --color-jade-500: #00a298;
 
   /*
-   * Neutrals tuned to the reference site's greys and section bands.
+   * Accent: the orange highlight.
    *
-   * Contrast rule for this ramp: ink-500 is the LIGHTEST grey usable as text.
-   * It clears 4.5:1 on both white (5.0:1) and the ink-50 section band (4.7:1).
-   * ink-50 … ink-400 are backgrounds, borders and dividers ONLY — ink-400 as
-   * text on white is 2.8:1 and ink-300 is 1.6:1, which is why secondary copy
-   * using them was hard to read. Secondary text: ink-500. Body text: ink-600+.
+   * Contrast rule: accent-500 is a FILL, not a text colour — it is 2.4:1 on
+   * white. Put ink-900 on top of it (7.5:1) for buttons. When orange text is
+   * needed on a light background, use accent-700 (5.2:1), which is the first
+   * step in this ramp that passes.
    */
-  --color-ink-50: #f7f7f7;
-  --color-ink-100: #f0f0f0;
-  --color-ink-200: #e2e2e2;
-  --color-ink-300: #cfcfcf;
-  --color-ink-400: #9b9b9b;
-  --color-ink-500: #6f6f6f;
-  --color-ink-600: #4a4a4a;
-  --color-ink-700: #3a3a3a;
-  --color-ink-800: #2a2a2a;
-  --color-ink-900: #1a1a1a;
+  --color-accent-50: #fff7ed;
+  --color-accent-100: #ffedd5;
+  --color-accent-200: #fed7aa;
+  --color-accent-300: #fdba74;
+  --color-accent-400: #f8a94a;
+  --color-accent-500: #f0901f;
+  --color-accent-600: #d4770f;
+  --color-accent-700: #a85a0b;
 
   /*
-   * Kanit for headings, Sarabun for body — both carry full Thai and Latin
-   * coverage, so a Thai and an English page share one vertical rhythm. The
-   * --font-*-var values are injected by next/font in the site layout.
+   * Neutrals: blue-tinted slate, matching the reference site's #3d4468 body copy
+   * and #0a0e2e headings, with its three pale washes at the top of the ramp.
+   *
+   * Contrast rule for this ramp: ink-500 is the LIGHTEST grey usable as text
+   * (5.2:1 on white, 4.8:1 on the ink-50 band). ink-50 … ink-400 are
+   * backgrounds, borders and dividers ONLY. Secondary text: ink-500.
+   * Body text: ink-600+.
+   */
+  --color-ink-50: #f4f6fb;
+  --color-ink-100: #eaf0fb;
+  --color-ink-200: #dbe3f2;
+  --color-ink-300: #c2cde4;
+  --color-ink-400: #94a1c0;
+  --color-ink-500: #5f6c92;
+  --color-ink-600: #3d4468;
+  --color-ink-700: #2f3552;
+  --color-ink-800: #1a1f3a;
+  --color-ink-900: #0a0e2e;
+
+  /*
+   * One family for everything, as on the reference site. --font-display is kept
+   * as a separate token so components can keep asking for it; it simply resolves
+   * to the same face here.
    */
   --font-sans:
-    var(--font-sarabun-var), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
-  --font-display:
-    var(--font-kanit-var), var(--font-sarabun-var), ui-sans-serif, system-ui,
+    var(--font-kanit-var), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
+  --font-display: var(--font-sans);
 
-  /* Squarer than the previous theme — the reference site is near-rectangular. */
-  --radius-card: 0.375rem;
+  /* Generously rounded — the reference site uses 16px cards and 100px pills. */
+  --radius-card: 1rem;
+  --radius-pill: 100px;
 }
 
 /*
  * These MUST stay inside `@layer base`.
  *
  * Unlayered CSS beats every layered rule in the cascade, no matter how specific
- * the layered one is — and Tailwind's utilities live in `@layer utilities`. When
- * the heading rule below sat outside a layer, its `color` overrode `text-white`
- * on every heading, so an <h1> on a navy hero rendered navy-on-navy. Declaring
- * it in `base` puts it before `utilities` in the layer order (theme, base,
- * components, utilities), so a `text-*` utility overrides it as intended.
+ * the layered one is — and Tailwind's utilities live in `@layer utilities`. If
+ * the heading rule below sat outside a layer, its `color` would override
+ * `text-white` on every heading, so an <h1> on a dark hero would render
+ * dark-on-dark. Declaring it in `base` puts it before `utilities` in the layer
+ * order (theme, base, components, utilities) so a `text-*` utility wins.
  */
 @layer base {
   html {
@@ -89,33 +108,33 @@
   body {
     font-family: var(--font-sans);
     background-color: var(--color-white);
-    color: var(--color-ink-700);
+    color: var(--color-ink-600);
     line-height: 1.65;
   }
 
   /*
-   * Headings carry the display face; body copy stays on the text face. The
-   * colour here is only a default for headings that set none of their own —
-   * anything on a dark background is expected to override it with `text-white`.
+   * The colour here is only a default for headings that set none of their own —
+   * anything on a dark or gradient background is expected to override it with
+   * `text-white`.
    */
   :where(h1, h2, h3, h4, h5, h6) {
     font-family: var(--font-display);
-    color: var(--color-brand-800);
+    color: var(--color-ink-900);
     letter-spacing: -0.01em;
   }
 
   /* Thai text needs a touch more leading than Latin to stay readable. */
   html[lang="th"] body {
-    line-height: 1.8;
+    line-height: 1.85;
   }
 
-  /* Kanit's Thai glyphs sit tall; -0.01em tracking crowds them. */
+  /* Kanit's Thai glyphs sit tall; negative tracking crowds them. */
   html[lang="th"] :where(h1, h2, h3, h4, h5, h6) {
     letter-spacing: 0;
   }
 
   ::selection {
-    background-color: var(--color-accent-200);
+    background-color: var(--color-brand-200);
     color: var(--color-brand-900);
   }
 
@@ -123,7 +142,17 @@
   :where(a, button, input, select, textarea, summary):focus-visible {
     outline: 2px solid var(--color-brand-500);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 6px;
+  }
+
+  /*
+   * Admin tables get a tighter rhythm than the marketing pages. Layered for the
+   * same reason as the rules above — unlayered, this background would win over
+   * any `bg-*` utility placed on the admin body.
+   */
+  .admin-body {
+    line-height: 1.5;
+    background-color: var(--color-ink-50);
   }
 }
 
@@ -134,6 +163,197 @@
     max-width: 1200px;
     padding-inline: 1.25rem;
   }
+
+  /* ---------------------------------------------------------------- gradients */
+
+  /*
+   * The signature 135° run: blue → cyan → teal.
+   *
+   * DECORATIVE ONLY — thin rules, bars, dividers. White text over the cyan stop
+   * is 2.8:1 and over the teal stop 3.2:1, so this must not sit behind copy.
+   * Use .grad-brand-text for that.
+   */
+  .grad-brand {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-brand-700) 0%,
+      var(--color-aqua-500) 60%,
+      var(--color-jade-500) 100%
+    );
+  }
+
+  /*
+   * The same gradient with a navy scrim laid over it, for surfaces that carry
+   * white text (hero, CTA panel, enquiry card). The scrim lifts the worst point
+   * of the run from 2.8:1 to about 4.9:1 while keeping the hue vivid — the
+   * alternative, darkening the stops themselves, loses the brightness that makes
+   * this palette recognisable.
+   */
+  .grad-brand-text {
+    background-image:
+      linear-gradient(rgb(10 14 46 / 0.32), rgb(10 14 46 / 0.32)),
+      linear-gradient(
+        135deg,
+        var(--color-brand-700) 0%,
+        var(--color-aqua-500) 60%,
+        var(--color-jade-500) 100%
+      );
+  }
+
+  /*
+   * Two-stop version for buttons, pills and badges. Ends on aqua-700 rather than
+   * aqua-500 so white text clears 4.5:1 across the whole fill — these elements
+   * are small, and a scrim on something button-sized just muddies the colour.
+   */
+  .grad-action {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-brand-700),
+      var(--color-aqua-700)
+    );
+  }
+
+  /* Pale wash for alternating page bands. */
+  .band-tint {
+    background-image: linear-gradient(
+      135deg,
+      #f0f6fd 0%,
+      var(--color-ink-100) 40%,
+      var(--color-ink-50) 100%
+    );
+  }
+
+  /* ------------------------------------------------------------------ surfaces */
+
+  /*
+   * Cards are separated by a soft blue-tinted shadow rather than a border, which
+   * is what gives the reference site its lifted, airy feel.
+   */
+  .card {
+    background-color: var(--color-white);
+    border-radius: var(--radius-card);
+    box-shadow: 0 4px 24px rgb(1 25 185 / 0.08);
+    transition:
+      box-shadow 200ms ease,
+      transform 200ms ease;
+  }
+
+  .card-hover:hover {
+    box-shadow: 0 16px 48px rgb(1 25 185 / 0.16);
+    transform: translateY(-3px);
+  }
+
+  .shadow-soft {
+    box-shadow: 0 12px 40px rgb(1 25 185 / 0.1);
+  }
+
+  .shadow-lifted {
+    box-shadow: 0 20px 60px rgb(1 25 185 / 0.12);
+  }
+
+  /* ------------------------------------------------------------------- headings */
+
+  /*
+   * A short gradient rule under section headings — the same motif as the yellow
+   * bar on the sibling site, restyled to this palette. Applied to a wrapper
+   * rather than the heading so it survives wrapping.
+   */
+  .heading-rule::after {
+    content: "";
+    display: block;
+    width: 4rem;
+    height: 4px;
+    margin-top: 0.85rem;
+    border-radius: var(--radius-pill);
+    background-image: linear-gradient(
+      to right,
+      var(--color-brand-700),
+      var(--color-aqua-500)
+    );
+  }
+
+  .heading-rule-center::after {
+    margin-inline: auto;
+  }
+
+  /* On a gradient background the rule needs to be solid white to register. */
+  .heading-rule-light::after {
+    background-image: none;
+    background-color: rgb(255 255 255 / 0.85);
+  }
+
+  /* -------------------------------------------------------------------- buttons */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.6rem;
+    font-weight: 500;
+    border-radius: var(--radius-pill);
+    transition:
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      color 160ms ease,
+      border-color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .btn-primary {
+    background-image: linear-gradient(
+      135deg,
+      var(--color-brand-700),
+      var(--color-aqua-500)
+    );
+    color: var(--color-white);
+    box-shadow: 0 8px 32px rgb(1 25 185 / 0.22);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 12px 40px rgb(1 25 185 / 0.32);
+    transform: translateY(-1px);
+  }
+
+  /*
+   * Orange fill with near-black navy text. White on accent-500 is only 2.4:1;
+   * ink-900 on it is 7.5:1.
+   */
+  .btn-accent {
+    background-color: var(--color-accent-500);
+    color: var(--color-ink-900);
+    box-shadow: 0 8px 32px rgb(240 144 31 / 0.3);
+  }
+
+  .btn-accent:hover {
+    background-color: var(--color-accent-400);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    border: 2px solid var(--color-brand-700);
+    color: var(--color-brand-700);
+    background-color: transparent;
+  }
+
+  .btn-outline:hover {
+    background-color: var(--color-brand-700);
+    color: var(--color-white);
+  }
+
+  /* On a gradient hero, an outline button needs light-on-dark treatment. */
+  .btn-outline-light {
+    border: 2px solid rgb(255 255 255 / 0.75);
+    color: var(--color-white);
+    background-color: transparent;
+  }
+
+  .btn-outline-light:hover {
+    background-color: var(--color-white);
+    color: var(--color-brand-700);
+  }
+
+  /* ---------------------------------------------------------------- rich text */
 
   .prose-block p {
     margin-block: 0.85em;
@@ -158,100 +378,11 @@
 
   .prose-block blockquote {
     margin-block: 1.2em;
-    padding-inline-start: 1rem;
-    border-inline-start: 3px solid var(--color-accent-400);
+    padding-inline: 1rem;
+    padding-block: 0.4em;
+    border-inline-start: 4px solid var(--color-aqua-500);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    background-color: var(--color-ink-50);
     color: var(--color-ink-600);
-    font-style: italic;
-  }
-
-  /*
-   * The reference site's signature: a short yellow rule under each section
-   * heading. Applied to the wrapper, not the heading, so it survives wrapping.
-   */
-  .heading-rule::after {
-    content: "";
-    display: block;
-    width: 3.5rem;
-    height: 4px;
-    margin-top: 0.75rem;
-    background-color: var(--color-accent-400);
-  }
-
-  .heading-rule-center::after {
-    margin-inline: auto;
-  }
-
-  /* Alternating page bands, as on the reference site. */
-  .band-tint {
-    background-color: var(--color-ink-50);
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.4rem;
-    font-weight: 600;
-    font-family: var(--font-display);
-    border-radius: 3px;
-    transition:
-      background-color 150ms ease,
-      color 150ms ease,
-      border-color 150ms ease;
-  }
-
-  .btn-primary {
-    background-color: var(--color-brand-700);
-    color: var(--color-white);
-  }
-
-  .btn-primary:hover {
-    background-color: var(--color-brand-800);
-  }
-
-  /* Navy on yellow — the reference site's loudest call to action. */
-  .btn-accent {
-    background-color: var(--color-accent-400);
-    color: var(--color-brand-800);
-  }
-
-  .btn-accent:hover {
-    background-color: var(--color-accent-300);
-  }
-
-  .btn-outline {
-    border: 2px solid var(--color-brand-700);
-    color: var(--color-brand-700);
-    background-color: transparent;
-  }
-
-  .btn-outline:hover {
-    background-color: var(--color-brand-700);
-    color: var(--color-white);
-  }
-
-  /* On the dark hero, an outline button needs light-on-dark treatment. */
-  .btn-outline-light {
-    border: 2px solid rgb(255 255 255 / 0.7);
-    color: var(--color-white);
-    background-color: transparent;
-  }
-
-  .btn-outline-light:hover {
-    background-color: var(--color-white);
-    color: var(--color-brand-800);
-  }
-}
-
-@layer base {
-  /*
-   * Admin tables get a tighter rhythm than the marketing pages. Layered for the
-   * same reason as the rules above — unlayered, this background would win over
-   * any `bg-*` utility placed on the admin body.
-   */
-  .admin-body {
-    line-height: 1.5;
-    background-color: var(--color-ink-50);
   }
 }

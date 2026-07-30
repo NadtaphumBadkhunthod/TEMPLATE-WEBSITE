@@ -90,48 +90,54 @@ async function main() {
 
   // --- settings -------------------------------------------------------------
   const settings: Record<string, unknown> = {
+    /*
+     * Placeholder demo copy in a science-expo register, to suit this skin. It is
+     * deliberately generic rather than the real NST Fair's name and branding —
+     * the visual style is borrowed, the identity is not. Replace all of it from
+     * Admin → Settings; none of it is referenced in code.
+     */
     site: {
       name: {
-        th: "ศูนย์วิจัยเมืองอัจฉริยะ",
-        en: "Smart City Research Center",
+        th: "มหกรรมวิทยาศาสตร์และเทคโนโลยี",
+        en: "Science & Technology Expo",
       },
       tagline: {
-        th: "งานวิจัยและระบบเมืองอัจฉริยะที่ใช้งานได้จริง",
-        en: "Research and smart city systems that actually get deployed",
+        th: "นิทรรศการและกิจกรรมการเรียนรู้ตลอดทั้งงาน",
+        en: "Exhibitions and hands-on learning throughout the fair",
       },
     },
     hero: {
       title: {
-        th: "เปลี่ยนเมืองให้ฉลาดขึ้น ทีละระบบ",
-        en: "Make your city smarter, one system at a time",
+        th: "ปัญญาแห่งวิทยาศาสตร์ เพื่ออนาคตที่ยั่งยืน",
+        en: "Intelligence in science for a sustainable future",
       },
       subtitle: {
-        th: "เราออกแบบ ติดตั้ง และดูแลระบบเมืองอัจฉริยะแบบครบวงจร ตั้งแต่เซ็นเซอร์จนถึงแดชบอร์ด",
-        en: "We design, install and maintain end-to-end smart city systems — from the sensors to the dashboard.",
+        th: "พบกับโซนนิทรรศการ เวทีเสวนา และกิจกรรมปฏิบัติการกว่าร้อยรายการ จากเครือข่ายวิจัยทั่วประเทศ",
+        en: "Explore exhibition zones, talks and hands-on workshops from research teams across the country.",
       },
-      ctaLabel: { th: "ดูผลงานของเรา", en: "See our work" },
+      ctaLabel: { th: "ดูโซนนิทรรศการ", en: "Browse exhibitions" },
     },
     contact: {
-      email: "hello@smartcityresearch.example",
-      phone: "+66 2 123 4567",
+      email: "hello@sciexpo.example",
+      phone: "+66 2 577 9999",
       address: {
-        th: "อาคารพหลโยธินเพลส ชั้น 12 กรุงเทพมหานคร 10400",
-        en: "Phahonyothin Place, 12th floor, Bangkok 10400, Thailand",
+        th: "ศูนย์แสดงสินค้าและการประชุม อิมแพ็ค เมืองทองธานี นนทบุรี 11120",
+        en: "IMPACT Exhibition Centre, Muang Thong Thani, Nonthaburi 11120, Thailand",
       },
     },
     modules: { quote: true },
     seo: {
       defaultTitle: {
-        th: "ผลงานระบบเมืองอัจฉริยะ",
-        en: "Smart City Project Portfolio",
+        th: "โซนนิทรรศการและกิจกรรม",
+        en: "Exhibitions & Activities",
       },
       defaultDescription: {
-        th: "รวมผลงานระบบเมืองอัจฉริยะที่เราออกแบบและติดตั้งทั่วประเทศไทย",
-        en: "A portfolio of smart city systems we have designed and deployed across Thailand.",
+        th: "รวมโซนนิทรรศการ กิจกรรม และผลงานวิจัยที่จัดแสดงภายในงาน",
+        en: "Exhibition zones, activities and research on show at the fair.",
       },
     },
     i18n: { contentFallback: "fallback" },
-    quote: { notifyEmails: ["sales@smartcityresearch.example"] },
+    quote: { notifyEmails: ["info@sciexpo.example"] },
   };
 
   for (const [key, value] of Object.entries(settings)) {

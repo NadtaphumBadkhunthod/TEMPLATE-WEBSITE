@@ -30,10 +30,10 @@ export function CategoryFilter({
       <Link
         href={hrefWith([])}
         aria-current={selected.length === 0}
-        className={`border px-4 py-1.5 text-sm font-medium transition ${
+        className={`rounded-[--radius-pill] px-4 py-2 text-sm font-medium transition ${
           selected.length === 0
-            ? "border-brand-700 bg-brand-700 text-white"
-            : "border-ink-200 bg-white text-ink-600 hover:border-brand-400 hover:text-brand-700"
+            ? "grad-action text-white shadow-[0_6px_20px_rgb(1_25_185_/_0.25)]"
+            : "bg-ink-50 text-ink-600 hover:bg-brand-50 hover:text-brand-700"
         }`}
       >
         {t("projects.allCategories")}
@@ -50,16 +50,16 @@ export function CategoryFilter({
             key={category.id}
             href={hrefWith(next)}
             aria-current={isSelected}
-            className={`border px-4 py-1.5 text-sm font-medium transition ${
+            className={`rounded-[--radius-pill] px-4 py-2 text-sm font-medium transition ${
               isSelected
-                ? "border-brand-700 bg-brand-700 text-white"
-                : "border-ink-200 bg-white text-ink-600 hover:border-brand-400 hover:text-brand-700"
+                ? "grad-action text-white shadow-[0_6px_20px_rgb(1_25_185_/_0.25)]"
+                : "bg-ink-50 text-ink-600 hover:bg-brand-50 hover:text-brand-700"
             }`}
           >
             {category.name}
             <span
               className={`ml-1.5 text-xs ${
-                isSelected ? "text-accent-400" : "text-ink-500"
+                isSelected ? "text-white/80" : "text-ink-500"
               }`}
             >
               {category.count}

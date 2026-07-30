@@ -56,7 +56,7 @@ export default async function QuotePage({
           <p className="mt-5 text-ink-500">{t("quote.subtitle")}</p>
         </header>
 
-        <div className="mt-10 border-t-4 border-accent-400 border-x border-b border-x-ink-200 border-b-ink-200 bg-white p-6 shadow-[0_10px_30px_-18px_rgba(23,59,107,0.4)] sm:p-8">
+        <div className="card shadow-soft mt-10 p-6 sm:p-8">
           {form && form.fields.length > 0 ? (
             <QuoteForm
               locale={locale}

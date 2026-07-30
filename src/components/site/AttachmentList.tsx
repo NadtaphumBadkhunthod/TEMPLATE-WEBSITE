@@ -16,7 +16,7 @@ export function AttachmentList({
   t: Translator;
 }) {
   return (
-    <ul className="mt-5 divide-y divide-ink-200 border border-ink-200">
+    <ul className="mt-5 space-y-3">
       {attachments.map((file) => {
         const kind = kindForMime(file.mimeType ?? "");
         const badge = extensionLabel(file.fileName, file.mimeType);
@@ -24,11 +24,11 @@ export function AttachmentList({
         const downloadHref = file.isExternal ? file.url : `${file.url}?download=1`;
 
         return (
-          <li key={file.id} className="bg-white p-4 sm:p-5">
+          <li key={file.id} className="card p-4 sm:p-5">
             <div className="flex flex-wrap items-center gap-4">
               <span
                 aria-hidden
-                className="grid h-11 w-14 shrink-0 place-items-center bg-brand-700 font-display text-[0.7rem] font-bold tracking-wide text-white"
+                className="grad-action grid h-11 w-14 shrink-0 place-items-center rounded-xl font-display text-[0.7rem] font-semibold tracking-wide text-white"
               >
                 {badge.slice(0, 5)}
               </span>

@@ -33,10 +33,10 @@ export function NavLinks({
             key={link.href}
             href={link.href}
             aria-current={isActive(link.href) ? "page" : undefined}
-            className={`whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium transition ${
+            className={`whitespace-nowrap rounded-[--radius-pill] px-4 py-2 text-sm font-medium transition ${
               isActive(link.href)
-                ? "border-accent-400 text-brand-800"
-                : "border-transparent text-ink-600"
+                ? "grad-action text-white"
+                : "bg-ink-50 text-ink-600"
             }`}
           >
             {link.label}
@@ -53,10 +53,10 @@ export function NavLinks({
           key={link.href}
           href={link.href}
           aria-current={isActive(link.href) ? "page" : undefined}
-          className={`relative px-4 py-5 text-[0.95rem] font-medium transition after:absolute after:inset-x-3 after:bottom-3 after:h-[3px] after:transition-colors ${
+          className={`rounded-[--radius-pill] px-4 py-2 text-[0.95rem] font-medium transition ${
             isActive(link.href)
-              ? "text-brand-800 after:bg-accent-400"
-              : "text-ink-600 after:bg-transparent hover:text-brand-800 hover:after:bg-accent-200"
+              ? "bg-brand-50 text-brand-700"
+              : "text-ink-600 hover:bg-ink-50 hover:text-brand-700"
           }`}
         >
           {link.label}

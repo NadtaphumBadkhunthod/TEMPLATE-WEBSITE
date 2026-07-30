@@ -1,13 +1,34 @@
-# Smart City Research Center
+# Science &amp; Technology Expo — NST Fair skin
 
 A bilingual (Thai / English) project-showcase site with its own PostgreSQL database
-and admin panel. Built to be re-skinned and re-used for other clients with the
-same shape — change the database and the theme tokens, not the code.
+and admin panel. **Identical in features to the sibling Smart City site; different
+skin.** It exists to prove the template's premise — that a new site is a new
+database plus new theme tokens, not new code.
 
 The site name is content, not code: it lives in `settings.site.name` (per language)
 and is editable from **Admin → Settings**.
 
 Design rationale lives in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+### Runs alongside the sibling site
+
+Nothing is shared — separate database, container, volume, port and uploads folder,
+so both projects can run at the same time.
+
+| | This site | Sibling Smart City site |
+|---|---|---|
+| Dev server | `http://localhost:3100` | `http://localhost:3000` |
+| Postgres | `nstfair-db` on `5434` | `showcase-db` on `5433` |
+| Database | `nstfair` | `showcase` |
+| Uploads | `./uploads` (own folder) | its own folder |
+
+### Placeholder content
+
+The seed's branding copy is written in a science-expo register to suit the skin,
+but it is **deliberately generic** — it is not the real NST Fair's name, logo or
+programme. The visual style is borrowed; the identity is not. The demo projects are
+the same six carried over from the sibling site. Replace all of it from the admin
+panel; none of it is referenced in code.
 
 ---
 
@@ -18,17 +39,17 @@ Requires Node 20+ and Docker (for Postgres).
 ```bash
 cp .env.example .env      # then edit AUTH_SECRET
 npm install
-npm run db:up             # starts Postgres on localhost:5433
+npm run db:up             # starts Postgres on localhost:5434
 npm run setup             # prisma generate + db push + seed
-npm run dev               # http://localhost:3000
+npm run dev               # http://localhost:3100
 ```
 
 The seed creates demo content and an admin account:
 
 | | |
 |---|---|
-| Public site | http://localhost:3000 → redirects to `/th` |
-| Admin | http://localhost:3000/admin |
+| Public site | http://localhost:3100 → redirects to `/th` |
+| Admin | http://localhost:3100/admin |
 | Login | `admin@example.com` / `admin1234` |
 
 Change those in `.env` (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`) before seeding,
@@ -131,13 +152,27 @@ encoding so Thai names survive.
 ## Re-using this for another client
 
 1. **Theme** — every colour, font and radius is in the `@theme` block at the top of
-   `src/app/globals.css`. The current skin follows Thailand's Smart City Office
-   site: navy `#173b6b` with a yellow `#fff200` accent, squared corners, Kanit for
-   headings and Sarabun for body text (both cover Thai and Latin, so the two
-   locales share one vertical rhythm). Swap the `--color-brand-*` and
-   `--color-accent-*` ramps and the whole site follows. Note that `accent-400` is a
-   fill and rule colour only — it fails contrast as text on white, so keep it behind
-   navy text rather than on it.
+   `src/app/globals.css`. This skin follows the NST Fair site: electric blue
+   `#0119b9` running into cyan `#29a4dd` and teal `#00a298` through 135° gradients,
+   an orange `#f0901f` highlight, 16px cards, 100px pills, soft blue-tinted shadows
+   instead of borders, and Kanit throughout (it covers Thai and Latin, so both
+   locales share one vertical rhythm). Swap the `--color-brand-*` /
+   `--color-accent-*` ramps and the whole site follows.
+
+   Three contrast rules are baked into this palette, and breaking them is how you
+   get invisible text:
+   - `accent-500` is a **fill**, never text — it is 2.4:1 on white. Put `ink-900`
+     on it (7.8:1). For orange text on a light background use `accent-700` (5.2:1).
+   - `ink-500` is the **lightest grey usable as text** (5.2:1 on white, 4.8:1 on the
+     band). `ink-50`–`ink-400` are backgrounds, borders and dividers only.
+   - `.grad-brand` is **decorative only** — white text over its cyan stop is 2.8:1.
+     Surfaces carrying white copy use `.grad-brand-text`, the same gradient under a
+     32% navy scrim, which lifts the worst point to 5.1:1. Buttons use
+     `.grad-action`, which ends on `aqua-700` so white clears 4.5:1 across the fill.
+
+   Base styles live inside `@layer base` on purpose. Unlayered CSS outranks every
+   layered rule, so a heading colour declared outside a layer would override
+   Tailwind's `text-white` and render dark-on-dark on the gradient hero.
 2. **Content** — all in Postgres. A new site is a fresh database plus a seed.
 3. **Modules** — toggle in Settings.
 4. **Domain vocabulary** — lives in `field_definitions` rows, not in the schema.

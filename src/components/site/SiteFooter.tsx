@@ -11,18 +11,17 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
   const siteName = pick(settings.site.name, locale);
 
   return (
-    <footer className="mt-24 bg-brand-800 text-white">
-      <div className="h-1 bg-accent-400" />
+    <footer className="mt-24 bg-ink-900 text-white">
+      <div className="grad-brand h-1.5" />
 
       <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.2fr]">
         <div>
           <div className="flex items-center gap-3">
             <span
               aria-hidden
-              className="relative grid size-10 shrink-0 place-items-center bg-white/10 font-display text-base font-bold text-white"
+              className="grad-action grid size-10 shrink-0 place-items-center rounded-xl font-display text-base font-semibold text-white"
             >
-              {siteName.trim().charAt(0) || "S"}
-              <span className="absolute -bottom-1 -right-1 size-2.5 bg-accent-400" />
+              {siteName.trim().charAt(0) || "N"}
             </span>
             <p className="font-display text-lg font-semibold text-white">
               {siteName}
@@ -34,14 +33,14 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
         </div>
 
         <div>
-          <p className="font-display text-sm font-semibold uppercase tracking-wide text-accent-400">
+          <p className="font-display text-sm font-semibold uppercase tracking-wide text-aqua-400">
             {t("footer.quickLinks")}
           </p>
           <ul className="mt-4 space-y-2.5 text-sm text-white/80">
             <li>
               <Link
                 href={`/${locale}`}
-                className="transition hover:text-accent-400"
+                className="transition hover:text-aqua-400"
               >
                 {t("nav.home")}
               </Link>
@@ -49,7 +48,7 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
             <li>
               <Link
                 href={`/${locale}/projects`}
-                className="transition hover:text-accent-400"
+                className="transition hover:text-aqua-400"
               >
                 {t("nav.projects")}
               </Link>
@@ -58,7 +57,7 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
               <li>
                 <Link
                   href={`/${locale}/quote`}
-                  className="transition hover:text-accent-400"
+                  className="transition hover:text-aqua-400"
                 >
                   {t("nav.quote")}
                 </Link>
@@ -68,7 +67,7 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
         </div>
 
         <div>
-          <p className="font-display text-sm font-semibold uppercase tracking-wide text-accent-400">
+          <p className="font-display text-sm font-semibold uppercase tracking-wide text-aqua-400">
             {t("footer.contact")}
           </p>
           <ul className="mt-4 space-y-3 text-sm text-white/80">
@@ -85,7 +84,7 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
                 <PhoneIcon />
                 <a
                   href={`tel:${settings.contact.phone.replace(/\s+/g, "")}`}
-                  className="transition hover:text-accent-400"
+                  className="transition hover:text-aqua-400"
                 >
                   {settings.contact.phone}
                 </a>
@@ -96,7 +95,7 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
                 <MailIcon />
                 <a
                   href={`mailto:${settings.contact.email}`}
-                  className="truncate transition hover:text-accent-400"
+                  className="truncate transition hover:text-aqua-400"
                 >
                   {settings.contact.email}
                 </a>
@@ -125,7 +124,7 @@ function iconProps() {
     strokeWidth: 2,
     strokeLinecap: "round" as const,
     "aria-hidden": true,
-    className: "mt-0.5 shrink-0 text-accent-400",
+    className: "mt-0.5 shrink-0 text-aqua-400",
   };
 }
 

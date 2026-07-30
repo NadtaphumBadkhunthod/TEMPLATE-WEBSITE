@@ -120,7 +120,10 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
           </div>
         )}
         <h1 className="mt-4 text-3xl font-bold sm:text-4xl">{project.title}</h1>
-        <div aria-hidden className="mt-5 h-1 w-14 bg-accent-400" />
+        <div
+          aria-hidden
+          className="grad-action mt-5 h-1 w-14 rounded-[--radius-pill]"
+        />
         {project.summary && (
           <p className="mt-5 text-lg leading-relaxed text-ink-600">
             {project.summary}
@@ -160,7 +163,7 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
                 {project.features.map((feature, index) => (
                   <li
                     key={index}
-                    className="flex gap-3 border-l-[3px] border-accent-400 bg-ink-50 p-4 text-sm text-ink-700"
+                    className="flex gap-3 rounded-[--radius-card] border-l-4 border-aqua-500 bg-ink-50 p-4 text-sm text-ink-700"
                   >
                     <span
                       aria-hidden
@@ -248,7 +251,7 @@ function EnquiryCard({
   t: ReturnType<typeof getTranslator>;
 }) {
   return (
-    <div className="border-t-4 border-accent-400 bg-brand-800 p-6 text-white">
+    <div className="grad-brand-text shadow-soft rounded-[--radius-card] p-6 text-white">
       <p className="font-display text-lg font-semibold text-white">
         {t("project.enquiry")}
       </p>

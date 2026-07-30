@@ -21,12 +21,15 @@ export default async function ThankYouPage({
       <div className="mx-auto max-w-lg text-center">
         <div
           aria-hidden
-          className="mx-auto grid size-14 place-items-center bg-accent-400 text-2xl font-bold text-brand-800"
+          className="grad-action mx-auto grid size-14 place-items-center rounded-[--radius-pill] text-2xl font-semibold text-white"
         >
           ✓
         </div>
         <h1 className="mt-6 text-3xl font-bold">{t("thankYou.title")}</h1>
-        <div aria-hidden className="mx-auto mt-5 h-1 w-14 bg-accent-400" />
+        <div
+          aria-hidden
+          className="grad-action mx-auto mt-5 h-1 w-14 rounded-[--radius-pill]"
+        />
         <p className="mt-5 text-ink-500">{t("thankYou.body")}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link

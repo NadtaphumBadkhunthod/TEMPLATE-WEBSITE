@@ -36,46 +36,46 @@ export default async function HomePage({
   return (
     <>
       {/*
-        Dark banner hero. The reference site uses a cityscape photo behind a navy
-        scrim; there is no site-wide hero image in settings yet, so this builds
-        the same depth from gradients — it reads as deliberate rather than as a
-        missing image, and swapping in a photo later means one background rule.
+        Gradient banner hero — the reference site's blue→cyan→teal run at 135°.
+        A soft radial highlight and a faint dot grid sit on top for depth, so it
+        reads as deliberate rather than as a missing photo; dropping a real image
+        in later is one background rule on the section.
       */}
-      <section className="relative isolate overflow-hidden bg-brand-800">
+      <section className="grad-brand-text relative isolate overflow-hidden">
         <div
           aria-hidden
           className="absolute inset-0 -z-10"
           style={{
             backgroundImage:
-              "radial-gradient(ellipse at top right, rgba(47,95,151,0.55), transparent 60%)",
+              "radial-gradient(ellipse at top right, rgba(255,255,255,0.28), transparent 62%)",
           }}
         />
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 opacity-[0.07]"
+          className="absolute inset-0 -z-10 opacity-[0.14]"
           style={{
             backgroundImage:
-              "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
+              "radial-gradient(circle, white 1.1px, transparent 1.1px)",
+            backgroundSize: "26px 26px",
           }}
         />
         <div className="container-page py-20 lg:py-28">
           <div className="max-w-3xl">
-            <span className="inline-block bg-accent-400 px-3 py-1 font-display text-xs font-semibold uppercase tracking-wider text-brand-800">
+            <span className="inline-block rounded-[--radius-pill] bg-white/15 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-white ring-1 ring-inset ring-white/30 backdrop-blur">
               {pick(settings.site.name, locale)}
             </span>
-            <h1 className="mt-6 font-display text-4xl font-bold leading-tight text-white sm:text-5xl">
+            <h1 className="mt-6 text-4xl font-semibold leading-tight text-white sm:text-5xl">
               {pick(settings.hero.title, locale)}
             </h1>
-            <div aria-hidden className="mt-6 h-1 w-20 bg-accent-400" />
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">
+            <div
+              aria-hidden
+              className="mt-6 h-1 w-20 rounded-[--radius-pill] bg-white/85"
+            />
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/90">
               {pick(settings.hero.subtitle, locale)}
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Link
-                href={`/${locale}/projects`}
-                className="btn btn-accent"
-              >
+              <Link href={`/${locale}/projects`} className="btn btn-accent">
                 {pick(settings.hero.ctaLabel, locale)}
               </Link>
               {settings.modules.quote && (
@@ -122,7 +122,7 @@ export default async function HomePage({
       )}
 
       {categories.length > 0 && (
-        <section className="band-tint border-y border-ink-200">
+        <section className="band-tint">
           <div className="container-page py-16">
             <div className="heading-rule">
               <h2 className="text-2xl font-bold sm:text-3xl">
@@ -143,18 +143,20 @@ export default async function HomePage({
       )}
 
       {settings.modules.quote && (
-        <section className="relative isolate overflow-hidden bg-brand-700">
-          <div
-            aria-hidden
-            className="absolute inset-0 -z-10"
-            style={{
-              backgroundImage:
-                "radial-gradient(ellipse at bottom left, rgba(12,47,83,0.7), transparent 65%)",
-            }}
-          />
-          <div className="container-page py-16 text-center">
-            <div className="heading-rule heading-rule-center">
-              <h2 className="text-2xl font-bold text-white sm:text-3xl">
+        <section className="container-page py-20">
+          {/* A rounded gradient panel rather than a full-bleed band, which is how
+              the reference site frames its registration call to action. */}
+          <div className="grad-brand-text shadow-lifted relative isolate overflow-hidden rounded-[2rem] px-8 py-14 text-center sm:px-16">
+            <div
+              aria-hidden
+              className="absolute inset-0 -z-10"
+              style={{
+                backgroundImage:
+                  "radial-gradient(ellipse at bottom left, rgba(255,255,255,0.22), transparent 62%)",
+              }}
+            />
+            <div className="heading-rule heading-rule-center heading-rule-light">
+              <h2 className="text-2xl font-semibold text-white sm:text-3xl">
                 {t("home.ctaTitle")}
               </h2>
             </div>
