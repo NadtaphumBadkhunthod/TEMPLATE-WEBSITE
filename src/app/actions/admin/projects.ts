@@ -19,6 +19,8 @@ type TranslationInput = {
   seoTitle: string;
   seoDescription: string;
   isPublished: boolean;
+  /** Brochure media ids for this language, in page order. */
+  brochure?: string[];
 };
 
 type ProjectPayload = {
@@ -26,6 +28,7 @@ type ProjectPayload = {
   status: "draft" | "published" | "archived";
   isFeatured: boolean;
   sortOrder: number;
+  infoDisplay: "text" | "brochure" | "both";
   coverMediaId: string | null;
   categoryIds: string[];
   primaryCategoryId: string | null;
@@ -60,6 +63,7 @@ export async function saveProject(
     status: payload.status,
     isFeatured: payload.isFeatured,
     sortOrder: Number.isFinite(payload.sortOrder) ? payload.sortOrder : 0,
+    infoDisplay: payload.infoDisplay ?? "text",
     coverMediaId: payload.coverMediaId || null,
     custom: payload.custom as never,
     publishedAt:
@@ -166,6 +170,20 @@ export async function saveProject(
           isPublic: true,
           label: attachment.label?.trim() || null,
         })),
+        // Brochure pages are tagged with their language, so the detail page can
+        // serve the Thai brochure to Thai readers and the English one to English
+        // readers from the same project.
+        ...Object.entries(payload.translations).flatMap(([locale, tr]) =>
+          (tr.brochure ?? []).map((mediaId, index) => ({
+            projectId: projectId!,
+            mediaId,
+            role: "brochure" as const,
+            sortOrder: index,
+            isPublic: true,
+            label: null,
+            locale,
+          })),
+        ),
       ];
       if (links.length) {
         await tx.projectMedia.createMany({ data: links, skipDuplicates: true });

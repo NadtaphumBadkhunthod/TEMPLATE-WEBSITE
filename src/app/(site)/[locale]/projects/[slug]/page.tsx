@@ -5,6 +5,7 @@ import { Suspense } from "react";
 
 import { AttachmentList } from "@/components/site/AttachmentList";
 import { BlockRenderer } from "@/components/site/BlockRenderer";
+import { BrochureViewer } from "@/components/site/BrochureViewer";
 import { Gallery } from "@/components/site/Gallery";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 import { ProjectCard } from "@/components/site/ProjectCard";
@@ -136,8 +137,29 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
             </div>
           )}
 
-          {project.body.length > 0 && (
+          {/*
+            The admin picks how this project reads: typed text, an uploaded
+            brochure, or the brochure followed by the text. `infoDisplay` has
+            already been downgraded to "text" upstream if no brochure exists, so
+            there is no empty-page case to guard here.
+          */}
+          {project.brochure && project.infoDisplay !== "text" && (
             <section>
+              <div className="heading-rule">
+                <h2 className="text-xl font-semibold">
+                  {t("project.brochure")}
+                </h2>
+              </div>
+              <div className="mt-5">
+                <BrochureViewer brochure={project.brochure} t={t} />
+              </div>
+            </section>
+          )}
+
+          {project.infoDisplay !== "brochure" && project.body.length > 0 && (
+            <section
+              className={project.infoDisplay === "both" ? "mt-10" : undefined}
+            >
               <div className="heading-rule">
                 <h2 className="text-xl font-semibold">
                   {t("project.overview")}
@@ -149,7 +171,8 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
             </section>
           )}
 
-          {project.features.length > 0 && (
+          {/* The feature list is typed copy too, so it follows the same rule. */}
+          {project.infoDisplay !== "brochure" && project.features.length > 0 && (
             <section className="mt-10">
               <div className="heading-rule">
                 <h2 className="text-xl font-semibold">

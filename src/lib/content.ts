@@ -49,7 +49,34 @@ export type ProjectListItem = {
   isTranslated: boolean;
 };
 
+/** One page of a brochure: a whole PDF, or a single image page. */
+export type BrochurePage = {
+  id: string;
+  /** `pdf` embeds in a viewer; `image` renders as a page. */
+  kind: "pdf" | "image";
+  url: string;
+  /** Always forces a download, whatever the type. */
+  downloadUrl: string;
+  label: string;
+  fileName: string | null;
+  mimeType: string | null;
+  sizeBytes: number | null;
+};
+
+export type BrochureView = {
+  pages: BrochurePage[];
+  /** False when this language has no brochure and another one's is shown. */
+  isTranslated: boolean;
+};
+
 export type ProjectDetail = ProjectListItem & {
+  /**
+   * How the admin chose to present this project. `brochure` and `both` fall back
+   * to `text` at render time when no brochure has actually been uploaded, so the
+   * page can never come out empty.
+   */
+  infoDisplay: "text" | "brochure" | "both";
+  brochure: BrochureView | null;
   body: Block[];
   features: Feature[];
   gallery: { id: string; url: string; alt: string }[];
@@ -252,6 +279,8 @@ export async function getProjectBySlug(
   const picked = pickTranslation(row.translations, locale, fallbackPolicy);
   if (!picked) return null;
 
+  const brochure = resolveBrochure(row.media, locale, t);
+
   const gallery = row.media
     .filter((m) => m.isPublic && (m.role === "gallery" || m.role === "cover"))
     .map((m) => {
@@ -291,6 +320,10 @@ export async function getProjectBySlug(
   return {
     ...base,
     slug: picked.row.slug,
+    // A brochure-only project with no brochure uploaded would render an empty
+    // page, so fall back to the text the admin already has.
+    infoDisplay: brochure ? row.infoDisplay : "text",
+    brochure,
     body: parseBlocks(picked.row.body),
     features: parseFeatures(picked.row.features),
     gallery,
@@ -298,6 +331,59 @@ export async function getProjectBySlug(
     specs,
     seoTitle: picked.row.seoTitle,
     seoDescription: picked.row.seoDescription,
+  };
+}
+
+/**
+ * Picks the brochure for `locale`. Brochures are printed per language, so the
+ * lookup is: this language's pages, else pages marked as shared across all
+ * languages, else the default language's — showing the wrong-language brochure
+ * beats showing nothing, and the caller flags it so the page can say so.
+ */
+function resolveBrochure(
+  media: ProjectRow["media"],
+  locale: Locale,
+  t: Translator,
+): BrochureView | null {
+  const brochures = media.filter((m) => m.isPublic && m.role === "brochure");
+  if (!brochures.length) return null;
+
+  const forLocale = brochures.filter((m) => m.locale === locale);
+  const shared = brochures.filter((m) => !m.locale);
+  const fallback = brochures.filter((m) => m.locale === defaultLocale);
+
+  const chosen = forLocale.length
+    ? forLocale
+    : shared.length
+      ? shared
+      : fallback.length
+        ? fallback
+        : brochures;
+
+  const pages = chosen
+    .map((m): BrochurePage | null => {
+      const url = mediaUrl(m.media);
+      if (!url) return null;
+      const mime = m.media.mimeType ?? "";
+      return {
+        id: m.id,
+        kind: mime.startsWith("image/") ? "image" : "pdf",
+        url,
+        // External links have no stored bytes to force a download on.
+        downloadUrl: m.media.externalUrl ? url : `${url}?download=1`,
+        label: m.label || m.media.originalName || t("project.brochure"),
+        fileName: m.media.originalName,
+        mimeType: m.media.mimeType,
+        sizeBytes: m.media.sizeBytes,
+      };
+    })
+    .filter((p): p is BrochurePage => p !== null);
+
+  if (!pages.length) return null;
+
+  return {
+    pages,
+    isTranslated: forLocale.length > 0 || shared.length > 0,
   };
 }
 

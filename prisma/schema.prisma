@@ -38,6 +38,17 @@ enum MediaRole {
   attachment
   video
   document
+  brochure
+}
+
+/// How a project's information is presented on its detail page.
+enum InfoDisplay {
+  /// Typed body blocks and the feature list (the default).
+  text
+  /// An uploaded brochure — a PDF, or image pages — shown in place of the text.
+  brochure
+  /// Brochure first, then the typed text beneath it.
+  both
 }
 
 enum FieldDataType {
@@ -95,6 +106,7 @@ model Locale {
   mediaTranslations           MediaTranslation[]
   fieldDefinitionTranslations FieldDefinitionTranslation[]
   formFieldTranslations       FormFieldTranslation[]
+  projectMedia                ProjectMedia[]
   pageTranslations            PageTranslation[]
   quoteRequests               QuoteRequest[]
 
@@ -131,6 +143,9 @@ model Project {
   sortOrder   Int       @default(0)
   publishedAt DateTime?
   isFeatured  Boolean   @default(false)
+
+  /// Whether the detail page shows typed text, an uploaded brochure, or both.
+  infoDisplay InfoDisplay @default(text)
 
   coverMediaId String?
   coverMedia   MediaAsset? @relation("ProjectCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
@@ -296,8 +311,14 @@ model ProjectMedia {
   /// Free-text label for attachments ("Brochure", "Spec sheet")
   label String?
 
-  @@unique([projectId, mediaId, role])
+  /// Which language this item belongs to; null means "show in every language".
+  /// Brochures are usually printed per language, galleries usually are not.
+  locale    String?
+  localeRef Locale? @relation(fields: [locale], references: [code])
+
+  @@unique([projectId, mediaId, role, locale])
   @@index([projectId, role, sortOrder])
+  @@index([projectId, role, locale])
   @@map("project_media")
 }
 
