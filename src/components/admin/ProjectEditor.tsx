@@ -34,13 +34,38 @@ export type TranslationDraft = {
   seoTitle: string;
   seoDescription: string;
   isPublished: boolean;
+  /**
+   * Brochure pages for this language, in order. Per-translation because a
+   * brochure is a printed artefact — the Thai and English ones are different
+   * files, not the same file with different captions.
+   */
+  brochure: string[];
 };
+
+const INFO_DISPLAY_MODES = [
+  {
+    value: "text",
+    label: "Typed text",
+    hint: "Show the description and feature list written below.",
+  },
+  {
+    value: "brochure",
+    label: "Brochure only",
+    hint: "Show the uploaded brochure instead of the typed text.",
+  },
+  {
+    value: "both",
+    label: "Brochure, then text",
+    hint: "Show the brochure first, with the typed text underneath.",
+  },
+] as const;
 
 export type ProjectDraft = {
   id?: string;
   status: "draft" | "published" | "archived";
   isFeatured: boolean;
   sortOrder: number;
+  infoDisplay: "text" | "brochure" | "both";
   coverMediaId: string | null;
   categoryIds: string[];
   primaryCategoryId: string | null;
@@ -243,6 +268,38 @@ export function ProjectEditor({
                   />
                 </Labelled>
 
+                {/*
+                  Sits inside the language tab because a brochure is a printed
+                  artefact — the Thai and English ones are different files.
+                */}
+                <Labelled
+                  label={`Brochure (${localeLabels[tab]})`}
+                  hint="A PDF, or image pages in order. Used when the presentation below is set to brochure."
+                >
+                  <MediaPicker
+                    assets={assets}
+                    selected={current.brochure}
+                    onChange={(brochure) => patchTranslation(tab, { brochure })}
+                    onUploaded={(asset) => setAssets((prev) => [asset, ...prev])}
+                    emptyLabel="Upload a PDF or image pages."
+                  />
+                  {draft.infoDisplay === "text" &&
+                    current.brochure.length > 0 && (
+                      <p className="mt-2 text-xs text-amber-700">
+                        Presentation is set to “Typed text”, so this brochure is
+                        not shown on the site. Change it under Presentation.
+                      </p>
+                    )}
+                  {draft.infoDisplay !== "text" &&
+                    current.brochure.length === 0 && (
+                      <p className="mt-2 text-xs text-amber-700">
+                        No brochure for {localeLabels[tab]} yet — this language
+                        falls back to another one&rsquo;s brochure, or to the
+                        typed text.
+                      </p>
+                    )}
+                </Labelled>
+
                 <label className="flex items-center gap-2 text-sm text-ink-700">
                   <input
                     type="checkbox"
@@ -359,6 +416,44 @@ export function ProjectEditor({
         </div>
 
         <div className="space-y-6">
+          <Panel
+            title="Presentation"
+            hint="How the detail page shows this project"
+          >
+            <div className="space-y-2">
+              {INFO_DISPLAY_MODES.map((mode) => (
+                <label
+                  key={mode.value}
+                  className="flex cursor-pointer gap-2.5 text-sm text-ink-700"
+                >
+                  <input
+                    type="radio"
+                    name="infoDisplay"
+                    value={mode.value}
+                    checked={draft.infoDisplay === mode.value}
+                    onChange={() => patch({ infoDisplay: mode.value })}
+                    className="mt-1 size-4 shrink-0 border-ink-300 text-brand-600"
+                  />
+                  <span>
+                    <span className="block font-medium">{mode.label}</span>
+                    <span className="block text-xs text-ink-500">
+                      {mode.hint}
+                    </span>
+                  </span>
+                </label>
+              ))}
+            </div>
+            {draft.infoDisplay !== "text" &&
+              locales.every(
+                (code) => (draft.translations[code]?.brochure.length ?? 0) === 0,
+              ) && (
+                <p className="mt-3 text-xs text-amber-700">
+                  No brochure uploaded in any language yet — the site will keep
+                  showing the typed text until one is added.
+                </p>
+              )}
+          </Panel>
+
           <Panel title="Categories">
             {categories.length === 0 ? (
               <p className="text-sm text-ink-500">

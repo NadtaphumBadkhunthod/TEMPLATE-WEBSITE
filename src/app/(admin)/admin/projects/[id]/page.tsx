@@ -25,6 +25,7 @@ function emptyTranslation(): TranslationDraft {
     seoTitle: "",
     seoDescription: "",
     isPublished: false,
+    brochure: [],
   };
 }
 
@@ -78,6 +79,11 @@ export default async function ProjectEditorPage({
           seoTitle: row.seoTitle ?? "",
           seoDescription: row.seoDescription ?? "",
           isPublished: row.isPublished,
+          brochure:
+            project?.media
+              .filter((m) => m.role === "brochure" && m.locale === locale)
+              .sort((a, b) => a.sortOrder - b.sortOrder)
+              .map((m) => m.mediaId) ?? [],
         }
       : emptyTranslation();
   }
@@ -87,6 +93,8 @@ export default async function ProjectEditorPage({
     status: (project?.status ?? "draft") as ProjectDraft["status"],
     isFeatured: project?.isFeatured ?? false,
     sortOrder: project?.sortOrder ?? 0,
+    infoDisplay: (project?.infoDisplay ??
+      "text") as ProjectDraft["infoDisplay"],
     coverMediaId: project?.coverMediaId ?? null,
     categoryIds: project?.categories.map((link) => link.categoryId) ?? [],
     primaryCategoryId:

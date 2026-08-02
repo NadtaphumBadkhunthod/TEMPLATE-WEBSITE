@@ -78,6 +78,8 @@ or change the password from the admin panel afterwards.
   plain links, so they are shareable and crawlable and work without JS.
 - **Project detail** — gallery, block description, feature list, specifications from
   admin-defined custom fields, downloads, related projects, enquiry call-to-action
+- **Brochure or text** — each project chooses how it reads: typed text, an uploaded
+  brochure shown in its place, or the brochure with the text underneath
 - **Downloads** — every attachment is downloadable whatever the format (PDF, Word,
   Excel, PowerPoint, MP3, MP4, ZIP, …), with a file-type badge and size. Audio and
   video also get a native player
@@ -129,6 +131,23 @@ built on this template needs prices, that is an additive change, not an un-picki
 **Rich text.** Descriptions are stored as a typed block array (`paragraph`, `heading`,
 `list`, `quote`) and rendered as real elements — nothing goes through
 `dangerouslySetInnerHTML`, so admin-entered text cannot inject markup.
+
+**Brochure instead of typed text.** Not every project gets written up — plenty
+already exist as a designed PDF or a set of page images. `projects.infoDisplay`
+(`text` / `brochure` / `both`) decides which the detail page shows, set per project
+under **Presentation** in the editor.
+
+Brochures are stored as ordinary media with `role = 'brochure'` and a `locale` on
+the `project_media` row, because a brochure is a printed artefact — the Thai and
+English ones are different files, not one file with different captions. The lookup
+is: this language's pages → pages marked as shared across languages → the default
+language's, with a visible notice when a reader is being shown another language's
+brochure. A PDF is embedded in the browser's own viewer; image pages are stacked.
+Either way every page also gets an explicit download, since an embedded PDF is
+unreliable on mobile and unusable to a screen reader.
+
+Choosing `brochure` without uploading one **falls back to the typed text** rather
+than rendering an empty page, so the setting is safe to flip before the file exists.
 
 **Attachments.** Any file type is accepted. The upload check in
 `src/lib/file-types.ts` is a *denylist*, not an allowlist, so a format nobody
