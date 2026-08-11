@@ -57,14 +57,6 @@ export async function SiteHeader({ locale }: { locale: Locale }) {
           <Suspense fallback={null}>
             <LanguageSwitcher current={locale} />
           </Suspense>
-          {settings.modules.quote && (
-            <Link
-              href={`/${locale}/quote`}
-              className="btn btn-primary hidden px-5 py-2.5 text-sm sm:inline-flex"
-            >
-              {t("nav.quote")}
-            </Link>
-          )}
         </div>
       </div>
 

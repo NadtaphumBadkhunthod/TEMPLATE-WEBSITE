@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { locales } from "@/i18n/config";
-import { db } from "@/lib/db";
-import { getSettings } from "@/lib/settings";
+import { loadCategories, loadProjects } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -17,28 +16,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = baseUrl();
   const entries: MetadataRoute.Sitemap = [];
 
-  let settings;
-  let projects: { locale: string; slug: string; updatedAt: Date }[] = [];
-  let categories: { locale: string; slug: string }[] = [];
-
-  try {
-    settings = await getSettings();
-    projects = await db.projectTranslation.findMany({
-      where: { isPublished: true, project: { status: "published" } },
-      select: { locale: true, slug: true, updatedAt: true },
-    });
-    categories = await db.categoryTranslation.findMany({
-      where: { category: { isActive: true } },
-      select: { locale: true, slug: true },
-    });
-  } catch {
-    // No database yet — still emit the static routes so the file is valid.
-    return locales.map((locale) => ({
-      url: `${base}/${locale}`,
-      changeFrequency: "weekly" as const,
-      priority: 1,
-    }));
-  }
+  const [projects, categories] = await Promise.all([
+    loadProjects(),
+    loadCategories(),
+  ]);
 
   for (const locale of locales) {
     entries.push({
@@ -51,30 +32,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.9,
     });
-    if (settings.modules.quote) {
+  }
+
+  for (const project of projects) {
+    if (project.status !== "published") continue;
+    for (const [locale, translation] of Object.entries(project.translations)) {
+      if (!translation.isPublished) continue;
       entries.push({
-        url: `${base}/${locale}/quote`,
+        url: `${base}/${locale}/projects/${translation.slug}`,
         changeFrequency: "monthly",
-        priority: 0.6,
+        priority: 0.8,
       });
     }
   }
 
-  for (const project of projects) {
-    entries.push({
-      url: `${base}/${project.locale}/projects/${project.slug}`,
-      lastModified: project.updatedAt,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    });
-  }
-
   for (const category of categories) {
-    entries.push({
-      url: `${base}/${category.locale}/projects?category=${encodeURIComponent(category.slug)}`,
-      changeFrequency: "weekly",
-      priority: 0.5,
-    });
+    if (!category.isActive) continue;
+    for (const [locale, translation] of Object.entries(category.translations)) {
+      entries.push({
+        url: `${base}/${locale}/projects?category=${encodeURIComponent(translation.slug)}`,
+        changeFrequency: "weekly",
+        priority: 0.5,
+      });
+    }
   }
 
   return entries;

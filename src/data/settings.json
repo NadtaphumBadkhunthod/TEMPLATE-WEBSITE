@@ -1,0 +1,47 @@
+{
+  "site": {
+    "name": {
+      "en": "Smart City research Center",
+      "th": "Smart City research Center"
+    },
+    "tagline": {
+      "en": "Exhibitions and hands-on learning throughout the fair",
+      "th": "นิทรรศการและกิจกรรมการเรียนรู้ตลอดทั้งงาน"
+    }
+  },
+  "hero": {
+    "title": {
+      "en": "Intelligence in science for a sustainable future",
+      "th": "ปัญญาแห่งวิทยาศาสตร์ เพื่ออนาคตที่ยั่งยืน"
+    },
+    "ctaLabel": {
+      "en": "Browse exhibitions",
+      "th": "ดูโซนนิทรรศการ"
+    },
+    "subtitle": {
+      "en": "Explore exhibition zones, talks and hands-on workshops from research teams across the country.",
+      "th": "พบกับโซนนิทรรศการ เวทีเสวนา และกิจกรรมปฏิบัติการกว่าร้อยรายการ จากเครือข่ายวิจัยทั่วประเทศ"
+    }
+  },
+  "contact": {
+    "email": "hello@sciexpo.example",
+    "phone": "+66 2 577 9999",
+    "address": {
+      "en": "IMPACT Exhibition Centre, Muang Thong Thani, Nonthaburi 11120, Thailand",
+      "th": "ศูนย์แสดงสินค้าและการประชุม อิมแพ็ค เมืองทองธานี นนทบุรี 11120"
+    }
+  },
+  "seo": {
+    "defaultTitle": {
+      "en": "Exhibitions & Activities",
+      "th": "โซนนิทรรศการและกิจกรรม"
+    },
+    "defaultDescription": {
+      "en": "Exhibition zones, activities and research on show at the fair.",
+      "th": "รวมโซนนิทรรศการ กิจกรรม และผลงานวิจัยที่จัดแสดงภายในงาน"
+    }
+  },
+  "i18n": {
+    "contentFallback": "fallback"
+  }
+}

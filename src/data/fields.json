@@ -1,0 +1,94 @@
+[
+  {
+    "entity": "project",
+    "key": "coverage_area",
+    "dataType": "text",
+    "isTranslatable": true,
+    "isFilterable": false,
+    "showOnCard": false,
+    "showOnDetail": true,
+    "isActive": true,
+    "sortOrder": 0,
+    "options": {},
+    "translations": {
+      "th": {
+        "label": "พื้นที่ให้บริการ",
+        "helpText": null,
+        "choiceLabels": {}
+      },
+      "en": {
+        "label": "Coverage area",
+        "helpText": null,
+        "choiceLabels": {}
+      }
+    }
+  },
+  {
+    "entity": "project",
+    "key": "connectivity",
+    "dataType": "select",
+    "isTranslatable": false,
+    "isFilterable": false,
+    "showOnCard": false,
+    "showOnDetail": true,
+    "isActive": true,
+    "sortOrder": 1,
+    "options": {
+      "choices": [
+        {
+          "value": "lora"
+        },
+        {
+          "value": "nbiot"
+        },
+        {
+          "value": "fiber"
+        }
+      ]
+    },
+    "translations": {
+      "th": {
+        "label": "การเชื่อมต่อ",
+        "helpText": null,
+        "choiceLabels": {
+          "lora": "LoRaWAN",
+          "fiber": "ไฟเบอร์",
+          "nbiot": "NB-IoT"
+        }
+      },
+      "en": {
+        "label": "Connectivity",
+        "helpText": null,
+        "choiceLabels": {
+          "lora": "LoRaWAN",
+          "fiber": "Fibre",
+          "nbiot": "NB-IoT"
+        }
+      }
+    }
+  },
+  {
+    "entity": "project",
+    "key": "deployed_year",
+    "dataType": "number",
+    "isTranslatable": false,
+    "isFilterable": false,
+    "showOnCard": false,
+    "showOnDetail": true,
+    "isActive": true,
+    "sortOrder": 2,
+    "options": {},
+    "translations": {
+      "th": {
+        "label": "ปีที่ติดตั้ง",
+        "helpText": null,
+        "choiceLabels": {}
+      },
+      "en": {
+        "label": "Year deployed",
+        "helpText": null,
+        "choiceLabels": {}
+      }
+    }
+  }
+]

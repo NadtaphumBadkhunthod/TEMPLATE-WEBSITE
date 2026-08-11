@@ -1,18 +1,30 @@
-import { cache } from "react";
-
-import { db } from "./db";
-import { mediaUrl } from "./media";
 import { getSettings } from "./settings";
 import { parseBlocks, parseFeatures, type Block, type Feature } from "./blocks";
+import {
+  fileNameOf,
+  fileSize,
+  isExternal,
+  loadCategories,
+  loadFields,
+  loadProjects,
+  mimeForFile,
+  publicUrl,
+  type CategoryData,
+  type FieldData,
+  type Localised,
+  type ProjectData,
+  type ProjectFile,
+  type ProjectTranslationData,
+} from "./data";
 import type { Locale } from "@/i18n/config";
 import { defaultLocale } from "@/i18n/config";
 import type { Translator } from "@/i18n";
 
 /**
- * Scale note: the catalogue is fetched and then filtered/sorted/paginated in
- * memory. That keeps the per-locale publish + fallback rules in one readable
- * place, and is comfortably fast for the few hundred projects this kind of site
- * holds. Move to SQL-level pagination if the catalogue reaches five figures.
+ * Reads the JSON content store and shapes it for the pages. Everything is
+ * filtered, sorted and paginated in memory — the catalogue is a few hundred
+ * projects at most, and keeping the per-locale publish and fallback rules in one
+ * readable place is worth more than query-level paging here.
  */
 
 export type ProjectCategoryView = {
@@ -26,9 +38,9 @@ export type AttachmentView = {
   id: string;
   label: string;
   /**
-   * The uploaded file's own name, kept alongside the display label so the UI can
-   * derive a file-type badge from the real extension — the label is free text
-   * the admin wrote and usually has no extension in it.
+   * The file's own name, kept alongside the display label so the UI can derive a
+   * file-type badge from the real extension — the label is free text and usually
+   * has no extension in it.
    */
   fileName: string | null;
   url: string;
@@ -55,7 +67,7 @@ export type BrochurePage = {
   /** `pdf` embeds in a viewer; `image` renders as a page. */
   kind: "pdf" | "image";
   url: string;
-  /** Always forces a download, whatever the type. */
+  /** Always offers the file for download, whatever the type. */
   downloadUrl: string;
   label: string;
   fileName: string | null;
@@ -71,9 +83,9 @@ export type BrochureView = {
 
 export type ProjectDetail = ProjectListItem & {
   /**
-   * How the admin chose to present this project. `brochure` and `both` fall back
-   * to `text` at render time when no brochure has actually been uploaded, so the
-   * page can never come out empty.
+   * How the project is presented. `brochure` and `both` fall back to `text` at
+   * render time when no brochure file is actually present, so the page can never
+   * come out empty.
    */
   infoDisplay: "text" | "brochure" | "both";
   brochure: BrochureView | null;
@@ -86,96 +98,92 @@ export type ProjectDetail = ProjectListItem & {
   seoDescription: string | null;
 };
 
-const projectInclude = {
-  translations: true,
-  coverMedia: { include: { translations: true } },
-  categories: {
-    include: { category: { include: { translations: true } } },
-  },
-  media: {
-    include: { media: { include: { translations: true } } },
-    orderBy: { sortOrder: "asc" },
-  },
-} as const;
+// ---------------------------------------------------------------- helpers
 
-type ProjectRow = Awaited<
-  ReturnType<typeof db.project.findMany<{ include: typeof projectInclude }>>
->[number];
+/** Picks one language out of a `{ th: …, en: … }` map, with a sane fallback. */
+function pickLocalised(
+  value: Localised | undefined,
+  locale: Locale,
+): string | null {
+  if (!value) return null;
+  return value[locale] ?? value[defaultLocale] ?? Object.values(value)[0] ?? null;
+}
 
 /**
  * Picks the translation for `locale`, honouring the site's fallback policy.
  * Returns null when the project should not be visible in this language at all.
  */
-function pickTranslation<T extends { locale: string; isPublished: boolean }>(
-  translations: T[],
+function pickTranslation(
+  translations: Record<string, ProjectTranslationData>,
   locale: Locale,
   fallbackPolicy: "hide" | "fallback",
-): { row: T; isTranslated: boolean } | null {
-  const exact = translations.find((tr) => tr.locale === locale);
+): { row: ProjectTranslationData; isTranslated: boolean } | null {
+  const exact = translations[locale];
   if (exact && exact.isPublished) return { row: exact, isTranslated: true };
 
   if (fallbackPolicy === "hide") return null;
 
   const fallback =
-    translations.find((tr) => tr.locale === defaultLocale && tr.isPublished) ??
-    translations.find((tr) => tr.isPublished);
+    (translations[defaultLocale]?.isPublished
+      ? translations[defaultLocale]
+      : undefined) ?? Object.values(translations).find((tr) => tr.isPublished);
 
   return fallback ? { row: fallback, isTranslated: false } : null;
 }
 
-function categoryName(
-  translations: { locale: string; name: string; slug: string }[],
-  locale: Locale,
-) {
-  const exact = translations.find((tr) => tr.locale === locale);
-  const fallback =
-    translations.find((tr) => tr.locale === defaultLocale) ?? translations[0];
-  return exact ?? fallback ?? null;
+function categoryTranslation(category: CategoryData, locale: Locale) {
+  return (
+    category.translations[locale] ??
+    category.translations[defaultLocale] ??
+    Object.values(category.translations)[0] ??
+    null
+  );
 }
 
-function mediaAlt(
-  translations: { locale: string; altText: string | null }[],
+function resolveCategories(
+  project: ProjectData,
+  categories: CategoryData[],
   locale: Locale,
-  fallbackText: string,
-) {
-  const exact = translations.find((tr) => tr.locale === locale);
-  return exact?.altText || fallbackText;
-}
-
-async function toListItem(
-  project: ProjectRow,
-  locale: Locale,
-  fallbackPolicy: "hide" | "fallback",
-): Promise<ProjectListItem | null> {
-  const picked = pickTranslation(project.translations, locale, fallbackPolicy);
-  if (!picked) return null;
-
-  const categories = project.categories
+): ProjectCategoryView[] {
+  return project.categories
     .map((link) => {
-      const name = categoryName(link.category.translations, locale);
-      if (!name) return null;
+      const category = categories.find((c) => c.id === link.id);
+      if (!category) return null;
+      const tr = categoryTranslation(category, locale);
+      if (!tr) return null;
       return {
-        id: link.category.id,
-        slug: name.slug,
-        name: name.name,
+        id: category.id,
+        slug: tr.slug,
+        name: tr.name,
         isPrimary: link.isPrimary,
       };
     })
     .filter((c): c is ProjectCategoryView => c !== null);
+}
+
+function toListItem(
+  project: ProjectData,
+  categories: CategoryData[],
+  locale: Locale,
+  fallbackPolicy: "hide" | "fallback",
+): ProjectListItem | null {
+  const picked = pickTranslation(project.translations, locale, fallbackPolicy);
+  if (!picked) return null;
 
   return {
     id: project.id,
     slug: picked.row.slug,
     title: picked.row.title,
     summary: picked.row.summary ?? "",
-    coverUrl: mediaUrl(project.coverMedia),
-    coverAlt: project.coverMedia
-      ? mediaAlt(project.coverMedia.translations, locale, picked.row.title)
-      : picked.row.title,
-    categories,
+    coverUrl: project.cover ? publicUrl(project.cover.file) : null,
+    coverAlt:
+      pickLocalised(project.cover?.alt, locale) ?? picked.row.title,
+    categories: resolveCategories(project, categories, locale),
     isTranslated: picked.isTranslated,
   };
 }
+
+// ---------------------------------------------------------------- queries
 
 export type ProjectQuery = {
   categorySlugs?: string[];
@@ -190,33 +198,41 @@ export async function getProjects(
   locale: Locale,
   query: ProjectQuery = {},
 ): Promise<{ items: ProjectListItem[]; total: number; pages: number }> {
-  const settings = await getSettings();
+  const [settings, projects, categories] = await Promise.all([
+    getSettings(),
+    loadProjects(),
+    loadCategories(),
+  ]);
   const fallbackPolicy = settings.i18n.contentFallback;
 
-  const rows = await db.project.findMany({
-    where: {
-      status: "published",
-      ...(query.featuredOnly ? { isFeatured: true } : {}),
-      ...(query.categorySlugs?.length
-        ? {
-            categories: {
-              some: {
-                category: {
-                  isActive: true,
-                  translations: { some: { slug: { in: query.categorySlugs } } },
-                },
-              },
-            },
-          }
-        : {}),
-    },
-    include: projectInclude,
-    orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }],
-  });
+  const wanted = query.categorySlugs?.length
+    ? new Set(query.categorySlugs)
+    : null;
+
+  const rows = projects
+    .filter((p) => p.status === "published")
+    .filter((p) => (query.featuredOnly ? p.isFeatured : true))
+    .filter((p) => {
+      if (!wanted) return true;
+      // A category matches on its slug in any language, so a link shared from
+      // the Thai site still filters correctly when opened in English.
+      return p.categories.some((link) => {
+        const category = categories.find((c) => c.id === link.id);
+        if (!category || !category.isActive) return false;
+        return Object.values(category.translations).some((tr) =>
+          wanted.has(tr.slug),
+        );
+      });
+    })
+    .sort(
+      (a, b) =>
+        a.sortOrder - b.sortOrder ||
+        (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""),
+    );
 
   const mapped: ProjectListItem[] = [];
   for (const row of rows) {
-    const item = await toListItem(row, locale, fallbackPolicy);
+    const item = toListItem(row, categories, locale, fallbackPolicy);
     if (item) mapped.push(item);
   }
 
@@ -258,80 +274,86 @@ export async function getProjectBySlug(
   t: Translator,
 ): Promise<ProjectDetail | null> {
   const slug = decodeSlug(rawSlug);
-  const settings = await getSettings();
+  const [settings, projects, categories] = await Promise.all([
+    getSettings(),
+    loadProjects(),
+    loadCategories(),
+  ]);
   const fallbackPolicy = settings.i18n.contentFallback;
 
   // Match the slug in any locale so a shared Thai URL still resolves when the
   // visitor is browsing in English.
-  const row = await db.project.findFirst({
-    where: {
-      status: "published",
-      translations: { some: { slug } },
-    },
-    include: projectInclude,
-  });
-
+  const row = projects.find(
+    (p) =>
+      p.status === "published" &&
+      Object.values(p.translations).some((tr) => tr.slug === slug),
+  );
   if (!row) return null;
 
-  const base = await toListItem(row, locale, fallbackPolicy);
+  const base = toListItem(row, categories, locale, fallbackPolicy);
   if (!base) return null;
 
   const picked = pickTranslation(row.translations, locale, fallbackPolicy);
   if (!picked) return null;
 
-  const brochure = resolveBrochure(row.media, locale, t);
-
-  const gallery = row.media
-    .filter((m) => m.isPublic && (m.role === "gallery" || m.role === "cover"))
-    .map((m) => {
-      const url = mediaUrl(m.media);
-      if (!url) return null;
-      return {
-        id: m.id,
-        url,
-        alt: mediaAlt(m.media.translations, locale, picked.row.title),
-      };
-    })
-    .filter((m): m is { id: string; url: string; alt: string } => m !== null);
-
-  const attachments = row.media
-    .filter(
-      (m) =>
-        m.isPublic &&
-        (m.role === "attachment" || m.role === "document" || m.role === "video"),
-    )
-    .map((m) => {
-      const url = mediaUrl(m.media);
-      if (!url) return null;
-      return {
-        id: m.id,
-        label: m.label || m.media.originalName || t("project.download"),
-        fileName: m.media.originalName,
-        url,
-        isExternal: !!m.media.externalUrl,
-        mimeType: m.media.mimeType,
-        sizeBytes: m.media.sizeBytes,
-      };
-    })
-    .filter((a): a is AttachmentView => a !== null);
-
-  const specs = await resolveSpecs(row, picked.row, locale);
+  const [brochure, gallery, attachments] = await Promise.all([
+    resolveBrochure(row, locale, t),
+    resolveGallery(row, locale, picked.row.title),
+    resolveAttachments(row, locale, t),
+  ]);
 
   return {
     ...base,
     slug: picked.row.slug,
-    // A brochure-only project with no brochure uploaded would render an empty
-    // page, so fall back to the text the admin already has.
+    // A brochure-only project with no brochure file would render an empty page,
+    // so fall back to the typed text.
     infoDisplay: brochure ? row.infoDisplay : "text",
     brochure,
     body: parseBlocks(picked.row.body),
     features: parseFeatures(picked.row.features),
     gallery,
     attachments,
-    specs,
+    specs: await resolveSpecs(row, picked.row, locale),
     seoTitle: picked.row.seoTitle,
     seoDescription: picked.row.seoDescription,
   };
+}
+
+async function resolveGallery(
+  project: ProjectData,
+  locale: Locale,
+  fallbackAlt: string,
+): Promise<{ id: string; url: string; alt: string }[]> {
+  const entries = project.cover
+    ? [project.cover, ...project.gallery]
+    : project.gallery;
+
+  return entries.map((item, index) => ({
+    id: `${project.id}-gallery-${index}`,
+    url: publicUrl(item.file),
+    alt: pickLocalised(item.alt, locale) ?? fallbackAlt,
+  }));
+}
+
+async function resolveAttachments(
+  project: ProjectData,
+  locale: Locale,
+  t: Translator,
+): Promise<AttachmentView[]> {
+  return Promise.all(
+    project.attachments.map(async (item, index) => {
+      const fileName = fileNameOf(item.file);
+      return {
+        id: `${project.id}-attachment-${index}`,
+        label: pickLocalised(item.label, locale) ?? fileName ?? t("project.download"),
+        fileName,
+        url: publicUrl(item.file),
+        isExternal: isExternal(item.file),
+        mimeType: mimeForFile(item.file),
+        sizeBytes: await fileSize(item.file),
+      };
+    }),
+  );
 }
 
 /**
@@ -340,12 +362,12 @@ export async function getProjectBySlug(
  * languages, else the default language's — showing the wrong-language brochure
  * beats showing nothing, and the caller flags it so the page can say so.
  */
-function resolveBrochure(
-  media: ProjectRow["media"],
+async function resolveBrochure(
+  project: ProjectData,
   locale: Locale,
   t: Translator,
-): BrochureView | null {
-  const brochures = media.filter((m) => m.isPublic && m.role === "brochure");
+): Promise<BrochureView | null> {
+  const brochures = project.brochure;
   if (!brochures.length) return null;
 
   const forLocale = brochures.filter((m) => m.locale === locale);
@@ -360,24 +382,22 @@ function resolveBrochure(
         ? fallback
         : brochures;
 
-  const pages = chosen
-    .map((m): BrochurePage | null => {
-      const url = mediaUrl(m.media);
-      if (!url) return null;
-      const mime = m.media.mimeType ?? "";
+  const pages = await Promise.all(
+    chosen.map(async (item, index): Promise<BrochurePage> => {
+      const mime = mimeForFile(item.file);
+      const fileName = fileNameOf(item.file);
       return {
-        id: m.id,
-        kind: mime.startsWith("image/") ? "image" : "pdf",
-        url,
-        // External links have no stored bytes to force a download on.
-        downloadUrl: m.media.externalUrl ? url : `${url}?download=1`,
-        label: m.label || m.media.originalName || t("project.brochure"),
-        fileName: m.media.originalName,
-        mimeType: m.media.mimeType,
-        sizeBytes: m.media.sizeBytes,
+        id: `${project.id}-brochure-${index}`,
+        kind: mime?.startsWith("image/") ? "image" : "pdf",
+        url: publicUrl(item.file),
+        downloadUrl: publicUrl(item.file),
+        label: pickLocalised(item.label, locale) ?? fileName ?? t("project.brochure"),
+        fileName,
+        mimeType: mime,
+        sizeBytes: await fileSize(item.file),
       };
-    })
-    .filter((p): p is BrochurePage => p !== null);
+    }),
+  );
 
   if (!pages.length) return null;
 
@@ -387,15 +407,15 @@ function resolveBrochure(
   };
 }
 
-/** Renders admin-defined custom fields into label/value pairs for display. */
+/** Renders the custom fields defined in `src/data/fields.json`. */
 async function resolveSpecs(
-  project: { custom: unknown },
-  translation: { custom: unknown },
+  project: ProjectData,
+  translation: ProjectTranslationData,
   locale: Locale,
 ): Promise<{ key: string; label: string; value: string }[]> {
   const definitions = await getFieldDefinitions("project");
-  const shared = (project.custom ?? {}) as Record<string, unknown>;
-  const localised = (translation.custom ?? {}) as Record<string, unknown>;
+  const shared = project.custom ?? {};
+  const localised = translation.custom ?? {};
 
   const specs: { key: string; label: string; value: string }[] = [];
 
@@ -405,38 +425,33 @@ async function resolveSpecs(
     if (raw === undefined || raw === null || raw === "") continue;
 
     const defTr =
-      def.translations.find((tr) => tr.locale === locale) ??
-      def.translations.find((tr) => tr.locale === defaultLocale) ??
-      def.translations[0];
+      def.translations[locale] ??
+      def.translations[defaultLocale] ??
+      Object.values(def.translations)[0];
 
     let value = String(raw);
     if (def.dataType === "boolean") {
       value = raw ? "✓" : "—";
     } else if (def.dataType === "select") {
-      const labels = (defTr?.choiceLabels ?? {}) as Record<string, string>;
-      value = labels[String(raw)] ?? String(raw);
+      value = defTr?.choiceLabels?.[String(raw)] ?? String(raw);
     }
 
-    const unit = (def.options as { unit?: string } | null)?.unit;
-    if (unit) value = `${value} ${unit}`;
+    if (def.options?.unit) value = `${value} ${def.options.unit}`;
 
-    specs.push({
-      key: def.key,
-      label: defTr?.label ?? def.key,
-      value,
-    });
+    specs.push({ key: def.key, label: defTr?.label ?? def.key, value });
   }
 
   return specs;
 }
 
-export const getFieldDefinitions = cache(async (entity: string) => {
-  return db.fieldDefinition.findMany({
-    where: { entity },
-    include: { translations: true },
-    orderBy: { sortOrder: "asc" },
-  });
-});
+export async function getFieldDefinitions(
+  entity: string,
+): Promise<FieldData[]> {
+  const fields = await loadFields();
+  return fields
+    .filter((f) => f.entity === entity)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+}
 
 export type CategoryView = {
   id: string;
@@ -449,28 +464,27 @@ export type CategoryView = {
 export async function getCategoriesWithCounts(
   locale: Locale,
 ): Promise<CategoryView[]> {
-  const rows = await db.category.findMany({
-    where: { isActive: true },
-    include: {
-      translations: true,
-      _count: {
-        select: { projects: { where: { project: { status: "published" } } } },
-      },
-    },
-    orderBy: { sortOrder: "asc" },
-  });
+  const [categories, projects] = await Promise.all([
+    loadCategories(),
+    loadProjects(),
+  ]);
 
-  return rows
-    .map((row) => {
-      const tr = categoryName(row.translations, locale);
+  const published = projects.filter((p) => p.status === "published");
+
+  return categories
+    .filter((c) => c.isActive)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((category) => {
+      const tr = categoryTranslation(category, locale);
       if (!tr) return null;
-      const full = row.translations.find((t) => t.slug === tr.slug);
       return {
-        id: row.id,
+        id: category.id,
         slug: tr.slug,
         name: tr.name,
-        description: full?.description ?? null,
-        count: row._count.projects,
+        description: tr.description ?? null,
+        count: published.filter((p) =>
+          p.categories.some((link) => link.id === category.id),
+        ).length,
       };
     })
     .filter((c): c is CategoryView => c !== null);
@@ -489,10 +503,18 @@ export async function getRelatedProjects(
 }
 
 /** All published slugs per locale — used by sitemap.xml and hreflang tags. */
-export async function getProjectSlugMap(projectId: string) {
-  const rows = await db.projectTranslation.findMany({
-    where: { projectId, isPublished: true },
-    select: { locale: true, slug: true },
-  });
-  return Object.fromEntries(rows.map((r) => [r.locale, r.slug]));
+export async function getProjectSlugMap(
+  projectId: string,
+): Promise<Record<string, string>> {
+  const projects = await loadProjects();
+  const project = projects.find((p) => p.id === projectId);
+  if (!project) return {};
+
+  return Object.fromEntries(
+    Object.entries(project.translations)
+      .filter(([, tr]) => tr.isPublished)
+      .map(([locale, tr]) => [locale, tr.slug]),
+  );
 }
+
+export type { ProjectFile };

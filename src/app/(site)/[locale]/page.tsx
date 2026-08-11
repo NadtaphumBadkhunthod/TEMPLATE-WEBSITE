@@ -78,14 +78,6 @@ export default async function HomePage({
               <Link href={`/${locale}/projects`} className="btn btn-accent">
                 {pick(settings.hero.ctaLabel, locale)}
               </Link>
-              {settings.modules.quote && (
-                <Link
-                  href={`/${locale}/quote`}
-                  className="btn btn-outline-light"
-                >
-                  {t("nav.quote")}
-                </Link>
-              )}
             </div>
           </div>
         </div>
@@ -142,33 +134,6 @@ export default async function HomePage({
         </section>
       )}
 
-      {settings.modules.quote && (
-        <section className="container-page py-20">
-          {/* A rounded gradient panel rather than a full-bleed band, which is how
-              the reference site frames its registration call to action. */}
-          <div className="grad-brand-text shadow-lifted relative isolate overflow-hidden rounded-[2rem] px-8 py-14 text-center sm:px-16">
-            <div
-              aria-hidden
-              className="absolute inset-0 -z-10"
-              style={{
-                backgroundImage:
-                  "radial-gradient(ellipse at bottom left, rgba(255,255,255,0.22), transparent 62%)",
-              }}
-            />
-            <div className="heading-rule heading-rule-center heading-rule-light">
-              <h2 className="text-2xl font-semibold text-white sm:text-3xl">
-                {t("home.ctaTitle")}
-              </h2>
-            </div>
-            <p className="mx-auto mt-5 max-w-xl text-white/80">
-              {t("home.ctaBody")}
-            </p>
-            <Link href={`/${locale}/quote`} className="btn btn-accent mt-8">
-              {t("home.ctaButton")}
-            </Link>
-          </div>
-        </section>
-      )}
     </>
   );
 }

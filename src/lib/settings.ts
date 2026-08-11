@@ -1,6 +1,6 @@
 import { cache } from "react";
 
-import { db } from "./db";
+import { loadSettingsFile } from "./data";
 import type { Locale } from "@/i18n/config";
 
 /** A string that exists in every content locale. */
@@ -21,10 +21,6 @@ export type SiteSettings = {
     phone: string;
     address: LocalisedString;
   };
-  /** Optional modules — pages read these and 404 when disabled. */
-  modules: {
-    quote: boolean;
-  };
   seo: {
     defaultTitle: LocalisedString;
     defaultDescription: LocalisedString;
@@ -32,9 +28,6 @@ export type SiteSettings = {
   i18n: {
     /** 'hide' = 404 untranslated content; 'fallback' = show default locale. */
     contentFallback: "hide" | "fallback";
-  };
-  quote: {
-    notifyEmails: string[];
   };
 };
 
@@ -62,9 +55,6 @@ export const defaultSettings: SiteSettings = {
     phone: "+66 2 000 0000",
     address: { th: "กรุงเทพมหานคร ประเทศไทย", en: "Bangkok, Thailand" },
   },
-  modules: {
-    quote: true,
-  },
   seo: {
     defaultTitle: { th: "ผลงานของเรา", en: "Our Projects" },
     defaultDescription: {
@@ -75,21 +65,16 @@ export const defaultSettings: SiteSettings = {
   i18n: {
     contentFallback: "fallback",
   },
-  quote: {
-    notifyEmails: [],
-  },
 };
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return (
-    typeof value === "object" && value !== null && !Array.isArray(value)
-  );
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/** Deep-merges stored values over defaults so new keys never break an old DB. */
+/** Deep-merges the file over the defaults so a partial settings.json is fine. */
 function merge<T>(base: T, override: unknown): T {
   if (!isPlainObject(override) || !isPlainObject(base)) {
-    return (override === undefined ? base : (override as T));
+    return override === undefined ? base : (override as T);
   }
   const result: Record<string, unknown> = { ...base };
   for (const [key, value] of Object.entries(override)) {
@@ -100,28 +85,17 @@ function merge<T>(base: T, override: unknown): T {
 
 /**
  * Cached per request. Settings are read on nearly every page, so this keeps it
- * to one query per render rather than one per component.
+ * to one file read per render rather than one per component.
  */
 export const getSettings = cache(async (): Promise<SiteSettings> => {
-  let rows: { key: string; value: unknown }[] = [];
-  try {
-    rows = await db.setting.findMany();
-  } catch {
-    // Database unavailable (e.g. first boot before `npm run setup`) — the site
-    // still renders with defaults rather than throwing a 500.
-    return defaultSettings;
-  }
+  const stored = await loadSettingsFile();
 
   let settings = defaultSettings;
-  for (const row of rows) {
-    const [group] = row.key.split(".");
-    if (group && group in settings) {
+  for (const [group, value] of Object.entries(stored)) {
+    if (group in settings) {
       settings = {
         ...settings,
-        [group]: merge(
-          (settings as Record<string, unknown>)[group],
-          row.value,
-        ),
+        [group]: merge((settings as Record<string, unknown>)[group], value),
       };
     }
   }
@@ -136,12 +110,4 @@ export function pick(
 ): string {
   if (!value) return "";
   return value[locale] ?? value[fallbackLocale] ?? Object.values(value)[0] ?? "";
-}
-
-export async function saveSettingGroup(group: string, value: unknown) {
-  await db.setting.upsert({
-    where: { key: group },
-    create: { key: group, value: value as never },
-    update: { value: value as never },
-  });
 }

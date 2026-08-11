@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { defaultLocale, locales } from "./i18n/config";
-import { SESSION_COOKIE, verifySession } from "./lib/session";
 
 function detectLocale(request: NextRequest): string {
   const cookie = request.cookies.get("NEXT_LOCALE")?.value;
@@ -19,22 +18,7 @@ function detectLocale(request: NextRequest): string {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ---- Admin: everything except the login page needs a valid session -------
-  if (pathname.startsWith("/admin")) {
-    if (pathname === "/admin/login") return NextResponse.next();
-
-    const session = await verifySession(
-      request.cookies.get(SESSION_COOKIE)?.value,
-    );
-    if (!session) {
-      const url = new URL("/admin/login", request.url);
-      url.searchParams.set("next", pathname);
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.next();
-  }
-
-  // ---- Public: force an explicit locale prefix on every URL ----------------
+  // Force an explicit locale prefix on every URL.
   const hasLocale = (locales as readonly string[]).some(
     (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
   );
@@ -49,9 +33,9 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Everything except Next internals, API routes, and static files. API
-     * routes handle their own auth; /api/media must stay public.
+     * Everything except Next internals and static files. `/files` is excluded so
+     * project downloads are served straight from `public/` without a redirect.
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!_next/static|_next/image|files|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

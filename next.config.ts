@@ -14,13 +14,8 @@ const nextConfig: NextConfig = {
    */
   outputFileTracingRoot: process.cwd(),
   images: {
-    // Uploaded media is streamed through /api/media/* so it works on any host.
+    // Project images and files are served straight from public/files/.
     remotePatterns: [],
-  },
-  experimental: {
-    serverActions: {
-      bodySizeLimit: "16mb", // media uploads go through server actions
-    },
   },
 };
 
