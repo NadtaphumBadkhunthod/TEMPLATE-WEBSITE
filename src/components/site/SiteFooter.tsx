@@ -54,16 +54,6 @@ export async function SiteFooter({ locale }: { locale: Locale }) {
                 {t("nav.projects")}
               </Link>
             </li>
-            {settings.modules.quote && (
-              <li>
-                <Link
-                  href={`/${locale}/quote`}
-                  className="transition hover:text-accent-400"
-                >
-                  {t("nav.quote")}
-                </Link>
-              </li>
-            )}
           </ul>
         </div>
 

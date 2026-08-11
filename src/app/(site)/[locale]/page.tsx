@@ -78,14 +78,6 @@ export default async function HomePage({
               >
                 {pick(settings.hero.ctaLabel, locale)}
               </Link>
-              {settings.modules.quote && (
-                <Link
-                  href={`/${locale}/quote`}
-                  className="btn btn-outline-light"
-                >
-                  {t("nav.quote")}
-                </Link>
-              )}
             </div>
           </div>
         </div>
@@ -142,31 +134,6 @@ export default async function HomePage({
         </section>
       )}
 
-      {settings.modules.quote && (
-        <section className="relative isolate overflow-hidden bg-brand-700">
-          <div
-            aria-hidden
-            className="absolute inset-0 -z-10"
-            style={{
-              backgroundImage:
-                "radial-gradient(ellipse at bottom left, rgba(12,47,83,0.7), transparent 65%)",
-            }}
-          />
-          <div className="container-page py-16 text-center">
-            <div className="heading-rule heading-rule-center">
-              <h2 className="text-2xl font-bold text-white sm:text-3xl">
-                {t("home.ctaTitle")}
-              </h2>
-            </div>
-            <p className="mx-auto mt-5 max-w-xl text-white/80">
-              {t("home.ctaBody")}
-            </p>
-            <Link href={`/${locale}/quote`} className="btn btn-accent mt-8">
-              {t("home.ctaButton")}
-            </Link>
-          </div>
-        </section>
-      )}
     </>
   );
 }

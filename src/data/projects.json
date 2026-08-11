@@ -1,0 +1,588 @@
+[
+  {
+    "id": "5e39ce3c-ef5e-45e6-a5f3-05c0255a31d9",
+    "status": "draft",
+    "sortOrder": 0,
+    "publishedAt": null,
+    "isFeatured": true,
+    "infoDisplay": "text",
+    "folder": "khon-kaen-smart-street-lighting",
+    "categories": [
+      {
+        "id": "60f57980-6bb3-4439-8181-e8216e67bff8",
+        "isPrimary": true
+      },
+      {
+        "id": "fc5bcb68-6f08-4b95-a7d8-6143b3e36ede",
+        "isPrimary": false
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {
+      "connectivity": "lora",
+      "deployed_year": 2023
+    },
+    "translations": {
+      "th": {
+        "slug": "ระบบไฟถนนอัจฉริยะเทศบาลนครขอนแก่น",
+        "title": "ระบบไฟถนนอัจฉริยะ เทศบาลนครขอนแก่น",
+        "summary": "เปลี่ยนโคมไฟถนน 4,200 จุดเป็นระบบ LED ควบคุมระยะไกล ลดค่าไฟได้ 62% ภายในปีแรก",
+        "body": [
+          {
+            "text": "โครงการนี้ครอบคลุมการเปลี่ยนโคมไฟถนนเดิมทั้งหมด 4,200 จุดในเขตเทศบาลนครขอนแก่น ให้เป็นโคม LED พร้อมโมดูลควบคุมแบบไร้สายบนเครือข่าย LoRaWAN",
+            "type": "paragraph"
+          },
+          {
+            "text": "ระบบสามารถหรี่ไฟตามช่วงเวลาและปริมาณการสัญจรจริง แจ้งเตือนอัตโนมัติเมื่อโคมดับ และรายงานการใช้พลังงานรายจุดแบบเรียลไทม์ผ่านแดชบอร์ดกลาง",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "ควบคุมและหรี่ไฟรายจุดจากศูนย์กลาง"
+          },
+          {
+            "text": "แจ้งเตือนโคมเสียอัตโนมัติภายใน 15 นาที"
+          },
+          {
+            "text": "ลดการใช้พลังงานลง 62% เทียบกับระบบเดิม"
+          },
+          {
+            "text": "รองรับการขยายเพิ่มได้ถึง 20,000 จุด"
+          }
+        ],
+        "custom": {
+          "coverage_area": "เขตเทศบาลนครขอนแก่น 46 ตร.กม."
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "khon-kaen-smart-street-lighting",
+        "title": "Smart Street Lighting — Khon Kaen Municipality",
+        "summary": "4,200 street lights converted to remotely managed LED, cutting energy cost by 62% in the first year.",
+        "body": [
+          {
+            "text": "The project replaced all 4,200 existing street lights across Khon Kaen municipality with LED luminaires fitted with wireless control modules on a LoRaWAN network.",
+            "type": "paragraph"
+          },
+          {
+            "text": "The system dims lights by schedule and by measured traffic, raises automatic alerts when a luminaire fails, and reports per-pole energy use in real time through a central dashboard.",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "Per-pole remote control and dimming"
+          },
+          {
+            "text": "Automatic fault alerts within 15 minutes"
+          },
+          {
+            "text": "62% lower energy use than the previous system"
+          },
+          {
+            "text": "Scales to 20,000 connected poles"
+          }
+        ],
+        "custom": {
+          "coverage_area": "46 km² across Khon Kaen municipality"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
+  },
+  {
+    "id": "81b03304-5a30-488b-8825-24ca9403395d",
+    "status": "published",
+    "sortOrder": 1,
+    "publishedAt": "2026-07-14T13:18:40.995",
+    "isFeatured": true,
+    "infoDisplay": "text",
+    "folder": "phuket-traffic-control-centre",
+    "categories": [
+      {
+        "id": "12abada9-23b6-4f7a-8ac7-1acba6f5f838",
+        "isPrimary": true
+      },
+      {
+        "id": "659f6c46-8511-407e-9ffb-44c8a6a291ec",
+        "isPrimary": false
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {
+      "connectivity": "fiber",
+      "deployed_year": 2024
+    },
+    "translations": {
+      "th": {
+        "slug": "ศูนย์ควบคุมจราจรอัจฉริยะภูเก็ต",
+        "title": "ศูนย์ควบคุมจราจรอัจฉริยะ จังหวัดภูเก็ต",
+        "summary": "ระบบวิเคราะห์ภาพจากกล้อง 180 ตัว ปรับสัญญาณไฟจราจรอัตโนมัติตามปริมาณรถจริง",
+        "body": [
+          {
+            "text": "ศูนย์ควบคุมกลางรวบรวมภาพจากกล้อง 180 ตัวบนถนนสายหลัก และใช้การวิเคราะห์ภาพเพื่อนับปริมาณรถแยกตามประเภทและทิศทาง",
+            "type": "paragraph"
+          },
+          {
+            "text": "ระบบปรับรอบสัญญาณไฟจราจรใน 42 ทางแยกแบบอัตโนมัติ และส่งข้อมูลสภาพจราจรให้ประชาชนผ่านป้ายอัจฉริยะและแอปพลิเคชัน",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "วิเคราะห์ปริมาณจราจรแบบเรียลไทม์จากกล้อง 180 ตัว"
+          },
+          {
+            "text": "ปรับสัญญาณไฟอัตโนมัติ 42 ทางแยก"
+          },
+          {
+            "text": "ลดเวลาเดินทางเฉลี่ยชั่วโมงเร่งด่วน 18%"
+          },
+          {
+            "text": "เชื่อมต่อป้ายแสดงผลอัจฉริยะ 24 จุด"
+          }
+        ],
+        "custom": {
+          "coverage_area": "ถนนสายหลัก 42 ทางแยกในเขตเมืองภูเก็ต"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "phuket-traffic-control-centre",
+        "title": "Intelligent Traffic Control Centre — Phuket",
+        "summary": "Video analytics across 180 cameras, automatically retiming signals at 42 junctions from live demand.",
+        "body": [
+          {
+            "text": "A central control room aggregates video from 180 cameras on the main road network and applies video analytics to count vehicles by class and direction.",
+            "type": "paragraph"
+          },
+          {
+            "text": "The system retimes signals at 42 junctions automatically and publishes live traffic conditions to variable message signs and a public app.",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "Real-time traffic analytics from 180 cameras"
+          },
+          {
+            "text": "Automatic signal retiming at 42 junctions"
+          },
+          {
+            "text": "18% lower average peak-hour journey time"
+          },
+          {
+            "text": "Feeds 24 variable message signs"
+          }
+        ],
+        "custom": {
+          "coverage_area": "42 junctions across central Phuket"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
+  },
+  {
+    "id": "0a5ace74-d1b3-4930-97f5-cf1caebd38ad",
+    "status": "published",
+    "sortOrder": 2,
+    "publishedAt": "2026-07-02T13:18:41.002",
+    "isFeatured": true,
+    "infoDisplay": "text",
+    "folder": "chiang-mai-air-quality-network",
+    "categories": [
+      {
+        "id": "9b987128-f2ac-4084-a59e-dc7dd5b68833",
+        "isPrimary": true
+      },
+      {
+        "id": "659f6c46-8511-407e-9ffb-44c8a6a291ec",
+        "isPrimary": false
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {
+      "connectivity": "nbiot",
+      "deployed_year": 2022
+    },
+    "translations": {
+      "th": {
+        "slug": "เครือข่ายตรวจวัดคุณภาพอากาศเชียงใหม่",
+        "title": "เครือข่ายตรวจวัดคุณภาพอากาศ จังหวัดเชียงใหม่",
+        "summary": "สถานีตรวจวัด PM2.5 จำนวน 96 จุด รายงานผลทุก 5 นาที พร้อมระบบพยากรณ์ล่วงหน้า 48 ชั่วโมง",
+        "body": [
+          {
+            "text": "เครือข่ายสถานีตรวจวัดขนาดเล็ก 96 จุดกระจายทั่วจังหวัด วัดค่า PM2.5 PM10 อุณหภูมิ และความชื้น ส่งข้อมูลผ่านเครือข่าย NB-IoT",
+            "type": "paragraph"
+          },
+          {
+            "text": "ข้อมูลถูกสอบเทียบกับสถานีมาตรฐานของกรมควบคุมมลพิษ และนำไปใช้ในแบบจำลองพยากรณ์คุณภาพอากาศล่วงหน้า 48 ชั่วโมง เพื่อแจ้งเตือนประชาชนล่วงหน้า",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "ตรวจวัด PM2.5 และ PM10 ทุก 5 นาที"
+          },
+          {
+            "text": "สอบเทียบกับสถานีมาตรฐานอัตโนมัติ"
+          },
+          {
+            "text": "พยากรณ์ล่วงหน้า 48 ชั่วโมง"
+          },
+          {
+            "text": "เปิด API สาธารณะให้นักพัฒนาใช้งานฟรี"
+          }
+        ],
+        "custom": {
+          "coverage_area": "96 จุดทั่วจังหวัดเชียงใหม่"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "chiang-mai-air-quality-network",
+        "title": "Air Quality Monitoring Network — Chiang Mai",
+        "summary": "96 PM2.5 monitoring stations reporting every 5 minutes, with a 48-hour forecast model.",
+        "body": [
+          {
+            "text": "A network of 96 low-cost monitoring stations across the province measures PM2.5, PM10, temperature and humidity, reporting over NB-IoT.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Readings are automatically calibrated against Pollution Control Department reference stations and feed a 48-hour air quality forecast used for early public warnings.",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "PM2.5 and PM10 readings every 5 minutes"
+          },
+          {
+            "text": "Automatic calibration against reference stations"
+          },
+          {
+            "text": "48-hour forecasting model"
+          },
+          {
+            "text": "Free public API for developers"
+          }
+        ],
+        "custom": {
+          "coverage_area": "96 sites across Chiang Mai province"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
+  },
+  {
+    "id": "db703d6f-a056-48f7-b2b1-fee8cc26ac6e",
+    "status": "published",
+    "sortOrder": 3,
+    "publishedAt": "2026-06-20T13:18:41.008",
+    "isFeatured": false,
+    "infoDisplay": "text",
+    "folder": "rayong-smart-waste-management",
+    "categories": [
+      {
+        "id": "9b987128-f2ac-4084-a59e-dc7dd5b68833",
+        "isPrimary": true
+      },
+      {
+        "id": "12abada9-23b6-4f7a-8ac7-1acba6f5f838",
+        "isPrimary": false
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {
+      "connectivity": "lora",
+      "deployed_year": 2023
+    },
+    "translations": {
+      "th": {
+        "slug": "ระบบบริหารจัดการขยะอัจฉริยะระยอง",
+        "title": "ระบบบริหารจัดการขยะอัจฉริยะ เทศบาลเมืองระยอง",
+        "summary": "เซ็นเซอร์วัดระดับขยะในถัง 620 จุด จัดเส้นทางเก็บขยะอัตโนมัติ ลดระยะทางวิ่งรถ 31%",
+        "body": [
+          {
+            "text": "ติดตั้งเซ็นเซอร์วัดระดับขยะแบบอัลตราโซนิกในถังขยะสาธารณะ 620 จุด ส่งข้อมูลระดับความเต็มวันละ 4 ครั้ง",
+            "type": "paragraph"
+          },
+          {
+            "text": "ระบบวางแผนเส้นทางเก็บขยะรายวันโดยเลือกเฉพาะจุดที่เต็มเกิน 70% ทำให้ลดระยะทางวิ่งรถเก็บขยะลง 31% และลดการร้องเรียนเรื่องขยะล้นถังลง 74%",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "เซ็นเซอร์วัดระดับขยะ 620 จุด"
+          },
+          {
+            "text": "จัดเส้นทางเก็บขยะอัตโนมัติรายวัน"
+          },
+          {
+            "text": "ลดระยะทางวิ่งรถ 31%"
+          },
+          {
+            "text": "แอปสำหรับพนักงานเก็บขยะพร้อมนำทาง"
+          }
+        ],
+        "custom": {
+          "coverage_area": "เขตเทศบาลเมืองระยอง 620 จุดจัดเก็บ"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "rayong-smart-waste-management",
+        "title": "Smart Waste Management — Rayong Municipality",
+        "summary": "620 bin-level sensors driving daily route optimisation, cutting collection mileage by 31%.",
+        "body": [
+          {
+            "text": "Ultrasonic fill-level sensors were installed in 620 public bins, reporting fill level four times a day.",
+            "type": "paragraph"
+          },
+          {
+            "text": "The platform plans each day's collection route from bins above 70% full, reducing vehicle mileage by 31% and overflow complaints by 74%.",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "620 bin fill-level sensors"
+          },
+          {
+            "text": "Automatic daily route planning"
+          },
+          {
+            "text": "31% less collection mileage"
+          },
+          {
+            "text": "Driver app with turn-by-turn routing"
+          }
+        ],
+        "custom": {
+          "coverage_area": "620 collection points across Rayong municipality"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
+  },
+  {
+    "id": "8f8e30fa-562c-42bb-964c-9c20df3a3835",
+    "status": "published",
+    "sortOrder": 4,
+    "publishedAt": "2026-06-08T13:18:41.014",
+    "isFeatured": false,
+    "infoDisplay": "text",
+    "folder": "central-city-data-platform",
+    "categories": [
+      {
+        "id": "659f6c46-8511-407e-9ffb-44c8a6a291ec",
+        "isPrimary": true
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {
+      "connectivity": "fiber",
+      "deployed_year": 2024
+    },
+    "translations": {
+      "th": {
+        "slug": "แพลตฟอร์มข้อมูลเมืองกลาง",
+        "title": "แพลตฟอร์มข้อมูลเมืองกลาง (City Data Hub)",
+        "summary": "ศูนย์รวมข้อมูลจาก 14 ระบบย่อย พร้อมแดชบอร์ดสำหรับผู้บริหารและ API สำหรับหน่วยงาน",
+        "body": [
+          {
+            "text": "แพลตฟอร์มกลางที่รวบรวมข้อมูลจากระบบย่อย 14 ระบบ ทั้งจราจร พลังงาน สิ่งแวดล้อม และความปลอดภัย เข้าสู่คลังข้อมูลเดียว",
+            "type": "paragraph"
+          },
+          {
+            "text": "ผู้บริหารสามารถดูภาพรวมเมืองผ่านแดชบอร์ดเดียว ขณะที่หน่วยงานย่อยเข้าถึงข้อมูลผ่าน API ที่ควบคุมสิทธิ์รายระดับ",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "รวมข้อมูลจาก 14 ระบบย่อยแบบเรียลไทม์"
+          },
+          {
+            "text": "แดชบอร์ดผู้บริหารปรับแต่งได้เอง"
+          },
+          {
+            "text": "API พร้อมการควบคุมสิทธิ์รายหน่วยงาน"
+          },
+          {
+            "text": "เก็บข้อมูลย้อนหลัง 10 ปีเพื่อการวิเคราะห์"
+          }
+        ],
+        "custom": {
+          "coverage_area": "ใช้งานร่วมกัน 14 หน่วยงานในสังกัด"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "central-city-data-platform",
+        "title": "Central City Data Platform",
+        "summary": "A single hub consolidating 14 subsystems, with executive dashboards and a governed API.",
+        "body": [
+          {
+            "text": "A central platform that consolidates data from 14 subsystems — traffic, energy, environment and safety — into one warehouse.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Executives get a single city-wide dashboard, while individual departments access the data through an API with per-department access control.",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "Real-time ingestion from 14 subsystems"
+          },
+          {
+            "text": "Configurable executive dashboards"
+          },
+          {
+            "text": "Governed API with per-department permissions"
+          },
+          {
+            "text": "10 years of history retained for analysis"
+          }
+        ],
+        "custom": {
+          "coverage_area": "Shared across 14 municipal departments"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
+  },
+  {
+    "id": "55317e4f-efae-461d-b902-e24baa526e05",
+    "status": "published",
+    "sortOrder": 5,
+    "publishedAt": "2026-05-27T13:18:41.02",
+    "isFeatured": false,
+    "infoDisplay": "text",
+    "folder": "hat-yai-intelligent-cctv",
+    "categories": [
+      {
+        "id": "fc5bcb68-6f08-4b95-a7d8-6143b3e36ede",
+        "isPrimary": true
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {
+      "connectivity": "fiber",
+      "deployed_year": 2022
+    },
+    "translations": {
+      "th": {
+        "slug": "ระบบกล้องวงจรปิดอัจฉริยะเทศบาลนครหาดใหญ่",
+        "title": "ระบบกล้องวงจรปิดอัจฉริยะ เทศบาลนครหาดใหญ่",
+        "summary": "กล้อง 340 ตัวพร้อมการวิเคราะห์เหตุการณ์อัตโนมัติ เชื่อมต่อศูนย์สั่งการและสถานีตำรวจ",
+        "body": [
+          {
+            "text": "ติดตั้งกล้องความละเอียดสูง 340 ตัวครอบคลุมพื้นที่เศรษฐกิจและจุดเสี่ยง เชื่อมต่อผ่านโครงข่ายไฟเบอร์เฉพาะ",
+            "type": "paragraph"
+          },
+          {
+            "text": "ระบบวิเคราะห์เหตุการณ์อัตโนมัติ เช่น การรวมกลุ่มผิดปกติ วัตถุต้องสงสัย และการเข้าพื้นที่หวงห้าม พร้อมแจ้งเตือนไปยังศูนย์สั่งการภายใน 8 วินาที",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "กล้องความละเอียดสูง 340 ตัว"
+          },
+          {
+            "text": "แจ้งเตือนเหตุการณ์ผิดปกติภายใน 8 วินาที"
+          },
+          {
+            "text": "เชื่อมต่อศูนย์สั่งการและสถานีตำรวจ 6 แห่ง"
+          },
+          {
+            "text": "เก็บภาพย้อนหลัง 90 วันตามระเบียบราชการ"
+          }
+        ],
+        "custom": {
+          "coverage_area": "พื้นที่เศรษฐกิจเทศบาลนครหาดใหญ่"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "hat-yai-intelligent-cctv",
+        "title": "Intelligent CCTV — Hat Yai Municipality",
+        "summary": "340 cameras with automated incident analytics, wired into the command centre and six police stations.",
+        "body": [
+          {
+            "text": "340 high-definition cameras were installed across the commercial district and identified risk locations, connected over a dedicated fibre network.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Automated analytics flag unusual crowding, abandoned objects and restricted-area entry, alerting the command centre within eight seconds.",
+            "type": "paragraph"
+          }
+        ],
+        "features": [
+          {
+            "text": "340 high-definition cameras"
+          },
+          {
+            "text": "Incident alerts within 8 seconds"
+          },
+          {
+            "text": "Integrated with 6 police stations"
+          },
+          {
+            "text": "90-day retention per government policy"
+          }
+        ],
+        "custom": {
+          "coverage_area": "Hat Yai municipal commercial district"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
+  }
+]

@@ -20,8 +20,9 @@ export function AttachmentList({
       {attachments.map((file) => {
         const kind = kindForMime(file.mimeType ?? "");
         const badge = extensionLabel(file.fileName, file.mimeType);
-        // External links have no stored bytes to force a download on.
-        const downloadHref = file.isExternal ? file.url : `${file.url}?download=1`;
+        // Files are served straight from public/; the `download` attribute below
+        // is what saves them, so the href needs no query of its own.
+        const downloadHref = file.url;
 
         return (
           <li key={file.id} className="bg-white p-4 sm:p-5">

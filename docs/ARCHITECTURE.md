@@ -1,5 +1,12 @@
 # Project Showcase Platform — Architecture & Data Design
 
+> **Historical record — no longer what the app does.** The database, the Prisma
+> schema, the `/admin` panel and the quote-request module described below have all
+> been removed. Content is now JSON files in `src/data/` and project files live in
+> `public/files/`. See [`../README.md`](../README.md) and
+> [`../src/data/README.md`](../src/data/README.md) for the shipped design. This
+> document, and `schema.prisma` beside it, are kept for the rationale only.
+
 **Status:** proposal / v1 — **now implemented.** See [`../README.md`](../README.md)
 for setup and for the handful of places the build deliberately deviates from this
 document (auth, i18n and the rich-text editor are hand-rolled rather than pulled from

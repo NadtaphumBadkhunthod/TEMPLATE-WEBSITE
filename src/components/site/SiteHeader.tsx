@@ -82,14 +82,6 @@ export async function SiteHeader({ locale }: { locale: Locale }) {
             <NavLinks links={links} variant="desktop" />
           </nav>
 
-          {settings.modules.quote && (
-            <Link
-              href={`/${locale}/quote`}
-              className="btn btn-accent hidden shrink-0 text-sm sm:inline-flex"
-            >
-              {t("nav.quote")}
-            </Link>
-          )}
         </div>
       </div>
 

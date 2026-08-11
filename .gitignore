@@ -15,11 +15,5 @@ yarn-error.log*
 next-env.d.ts
 *.tsbuildinfo
 
-# uploaded media. `uploads/` alone would exclude the directory itself, and Git
-# never descends into an excluded directory — so the negation below would never
-# apply and the folder would be missing from a fresh clone.
-uploads/*
-!uploads/.gitkeep
-
 # scratch git worktrees
 .claude/worktrees/

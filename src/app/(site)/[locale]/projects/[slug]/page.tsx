@@ -11,13 +11,11 @@ import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 import { ProjectCard } from "@/components/site/ProjectCard";
 import { getTranslator } from "@/i18n";
 import { isLocale, locales, type Locale } from "@/i18n/config";
-import { db } from "@/lib/db";
 import {
   getProjectBySlug,
+  getProjectSlugMap,
   getRelatedProjects,
-  type ProjectDetail,
 } from "@/lib/content";
-import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -53,13 +51,10 @@ export async function generateMetadata({
 
 /** Per-locale slugs, so hreflang and the switcher point at the right document. */
 async function slugAlternates(projectId: string) {
-  const rows = await db.projectTranslation.findMany({
-    where: { projectId, isPublished: true },
-    select: { locale: true, slug: true },
-  });
+  const slugs = await getProjectSlugMap(projectId);
   const map: Partial<Record<Locale, string>> = {};
-  for (const row of rows) {
-    if (isLocale(row.locale)) map[row.locale] = row.slug;
+  for (const [locale, slug] of Object.entries(slugs)) {
+    if (isLocale(locale)) map[locale] = slug;
   }
   return map;
 }
@@ -73,7 +68,6 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
   const project = await getProjectBySlug(locale, slug, t);
   if (!project) notFound();
 
-  const settings = await getSettings();
   const [related, alternates] = await Promise.all([
     getRelatedProjects(locale, project),
     slugAlternates(project.id),
@@ -129,7 +123,7 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
         )}
       </header>
 
-      <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="mt-10">
         <div className="min-w-0">
           {project.gallery.length > 0 && (
             <div className="mb-10">
@@ -237,12 +231,6 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
             </section>
           )}
         </div>
-
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-          {settings.modules.quote && (
-            <EnquiryCard project={project} locale={locale} t={t} />
-          )}
-        </aside>
       </div>
 
       {related.length > 0 && (
@@ -261,30 +249,3 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
   );
 }
 
-function EnquiryCard({
-  project,
-  locale,
-  t,
-}: {
-  project: ProjectDetail;
-  locale: Locale;
-  t: ReturnType<typeof getTranslator>;
-}) {
-  return (
-    <div className="border-t-4 border-accent-400 bg-brand-800 p-6 text-white">
-      <p className="font-display text-lg font-semibold text-white">
-        {t("project.enquiry")}
-      </p>
-      <p className="mt-2 text-sm leading-relaxed text-white/75">
-        {t("project.enquiryBody")}
-      </p>
-
-      <Link
-        href={`/${locale}/quote?project=${encodeURIComponent(project.slug)}`}
-        className="btn btn-accent mt-5 w-full"
-      >
-        {t("project.requestQuote")}
-      </Link>
-    </div>
-  );
-}

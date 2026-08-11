@@ -1,0 +1,92 @@
+[
+  {
+    "id": "12abada9-23b6-4f7a-8ac7-1acba6f5f838",
+    "parentId": null,
+    "sortOrder": 0,
+    "isActive": true,
+    "translations": {
+      "th": {
+        "slug": "smart-mobility",
+        "name": "ระบบจราจรและขนส่ง",
+        "description": "ระบบบริหารจัดการจราจรและขนส่งสาธารณะ"
+      },
+      "en": {
+        "slug": "smart-mobility-en",
+        "name": "Smart Mobility",
+        "description": "Traffic management and public transport systems"
+      }
+    }
+  },
+  {
+    "id": "60f57980-6bb3-4439-8181-e8216e67bff8",
+    "parentId": null,
+    "sortOrder": 1,
+    "isActive": true,
+    "translations": {
+      "th": {
+        "slug": "smart-energy",
+        "name": "พลังงานอัจฉริยะ",
+        "description": "ระบบบริหารจัดการพลังงานและไฟฟ้าส่องสว่าง"
+      },
+      "en": {
+        "slug": "smart-energy-en",
+        "name": "Smart Energy",
+        "description": "Energy management and public lighting"
+      }
+    }
+  },
+  {
+    "id": "9b987128-f2ac-4084-a59e-dc7dd5b68833",
+    "parentId": null,
+    "sortOrder": 2,
+    "isActive": true,
+    "translations": {
+      "th": {
+        "slug": "environment",
+        "name": "สิ่งแวดล้อม",
+        "description": "ระบบตรวจวัดคุณภาพอากาศและน้ำ"
+      },
+      "en": {
+        "slug": "environment-en",
+        "name": "Environment",
+        "description": "Air and water quality monitoring"
+      }
+    }
+  },
+  {
+    "id": "fc5bcb68-6f08-4b95-a7d8-6143b3e36ede",
+    "parentId": null,
+    "sortOrder": 3,
+    "isActive": true,
+    "translations": {
+      "th": {
+        "slug": "public-safety",
+        "name": "ความปลอดภัยสาธารณะ",
+        "description": "ระบบกล้องวงจรปิดและแจ้งเตือนเหตุ"
+      },
+      "en": {
+        "slug": "public-safety-en",
+        "name": "Public Safety",
+        "description": "CCTV and incident alerting"
+      }
+    }
+  },
+  {
+    "id": "659f6c46-8511-407e-9ffb-44c8a6a291ec",
+    "parentId": null,
+    "sortOrder": 4,
+    "isActive": true,
+    "translations": {
+      "th": {
+        "slug": "data-platform",
+        "name": "แพลตฟอร์มข้อมูล",
+        "description": "ศูนย์รวมข้อมูลและแดชบอร์ดสำหรับผู้บริหาร"
+      },
+      "en": {
+        "slug": "data-platform-en",
+        "name": "Data Platform",
+        "description": "Central data hubs and executive dashboards"
+      }
+    }
+  }
+]

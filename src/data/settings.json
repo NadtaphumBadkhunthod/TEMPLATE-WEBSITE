@@ -1,0 +1,47 @@
+{
+  "site": {
+    "name": {
+      "en": "Smart City research Center",
+      "th": "Smart City research Center"
+    },
+    "tagline": {
+      "en": "Smart city systems that actually get deployed",
+      "th": "ระบบเมืองอัจฉริยะที่ติดตั้งใช้งานได้จริง"
+    }
+  },
+  "hero": {
+    "title": {
+      "en": "Make your city smarter, one system at a time",
+      "th": "เปลี่ยนเมืองให้ฉลาดขึ้น ทีละระบบ"
+    },
+    "ctaLabel": {
+      "en": "See our work",
+      "th": "ดูผลงานของเรา"
+    },
+    "subtitle": {
+      "en": "We design, install and maintain end-to-end smart city systems — from the sensors to the dashboard.",
+      "th": "เราออกแบบ ติดตั้ง และดูแลระบบเมืองอัจฉริยะแบบครบวงจร ตั้งแต่เซ็นเซอร์จนถึงแดชบอร์ด"
+    }
+  },
+  "contact": {
+    "email": "hello@urbancore.example",
+    "phone": "+66 2 123 4567",
+    "address": {
+      "en": "Phahonyothin Place, 12th floor, Bangkok 10400, Thailand",
+      "th": "อาคารพหลโยธินเพลส ชั้น 12 กรุงเทพมหานคร 10400"
+    }
+  },
+  "seo": {
+    "defaultTitle": {
+      "en": "Smart City Project Portfolio",
+      "th": "ผลงานระบบเมืองอัจฉริยะ"
+    },
+    "defaultDescription": {
+      "en": "A portfolio of smart city systems we have designed and deployed across Thailand.",
+      "th": "รวมผลงานระบบเมืองอัจฉริยะที่เราออกแบบและติดตั้งทั่วประเทศไทย"
+    }
+  },
+  "i18n": {
+    "contentFallback": "fallback"
+  }
+}

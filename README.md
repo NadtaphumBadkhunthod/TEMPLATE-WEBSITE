@@ -1,50 +1,61 @@
 # Smart City Research Center
 
-A bilingual (Thai / English) project-showcase site with its own PostgreSQL database
-and admin panel. Built to be re-skinned and re-used for other clients with the
-same shape — change the database and the theme tokens, not the code.
+A bilingual (Thai / English) project-showcase site. **No database, no admin panel,
+no backend** — every piece of content is a JSON file in `src/data/`, and every file
+a project offers sits in `public/files/`. Built to be re-skinned and re-used for
+other clients with the same shape: change the JSON and the theme tokens, not the code.
 
-The site name is content, not code: it lives in `settings.site.name` (per language)
-and is editable from **Admin → Settings**.
+The site name is content, not code: it lives in `settings.json` under `site.name`,
+per language.
 
-Design rationale lives in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Design rationale for the original database-backed build lives in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — kept as a record. The shipped app no
+longer follows it: see [Why there is no database](#why-there-is-no-database).
 
 ---
 
 ## Quick start
 
-Requires Node 20+ and Docker (for Postgres).
+Requires Node 20+. Nothing else — no Docker, no Postgres.
 
 ```bash
-cp .env.example .env      # then edit AUTH_SECRET
+cp .env.example .env
 npm install
-npm run db:up             # starts Postgres on localhost:5433
-npm run setup             # prisma generate + db push + seed
 npm run dev               # http://localhost:3000
 ```
-
-The seed creates demo content and an admin account:
 
 | | |
 |---|---|
 | Public site | http://localhost:3000 → redirects to `/th` |
-| Admin | http://localhost:3000/admin |
-| Login | `admin@example.com` / `admin1234` |
-
-Change those in `.env` (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`) before seeding,
-or change the password from the admin panel afterwards.
+| Content | `src/data/*.json` — see [`src/data/README.md`](src/data/README.md) |
+| Files | `public/files/<project folder>/` |
 
 ### Scripts
 
 | Script | Does |
 |---|---|
-| `npm run dev` | Dev server |
+| `npm run dev` | Dev server. JSON edits and new files appear on reload. |
 | `npm run build` / `npm start` | Production build and serve |
 | `npm run typecheck` | `tsc --noEmit` |
-| `npm run db:up` / `db:down` | Start/stop the Postgres container |
-| `npm run db:push` | Sync the Prisma schema to the database |
-| `npm run db:seed` | Reset content tables and load demo data |
-| `npm run db:studio` | Prisma Studio |
+
+---
+
+## Editing content
+
+Everything is in [`src/data/`](src/data/) and documented in
+[`src/data/README.md`](src/data/README.md):
+
+| File | Holds |
+|---|---|
+| `projects.json` | Every project: status, categories, per-language title/summary/body/features, files |
+| `categories.json` | Category list with per-language name and slug |
+| `fields.json` | Custom spec fields shown on the detail page |
+| `settings.json` | Site name, hero copy, contact details, SEO defaults, fallback policy |
+
+> **In production, rerun `npm run build` after editing.** The listing pages are
+> prerendered and Next serves `public/` from a build-time manifest, so neither JSON
+> edits nor newly added files show up on a running `npm start` until you rebuild.
+> `npm run dev` picks both up immediately.
 
 ---
 
@@ -52,163 +63,105 @@ or change the password from the admin panel afterwards.
 
 ### Public site (`/[locale]/…`)
 
-- **Homepage** — hero (editable in Settings), featured projects, category browser, CTA
+- **Homepage** — hero (from `settings.json`), featured projects, category browser
 - **Project listing** — multi-select category filter, sorting, pagination. Filters are
   plain links, so they are shareable and crawlable and work without JS.
 - **Project detail** — gallery, block description, feature list, specifications from
-  admin-defined custom fields, downloads, related projects, enquiry call-to-action
-- **Brochure or text** — each project chooses how it reads: typed text, an uploaded
-  brochure shown in its place, or the brochure with the text underneath
-- **Downloads** — every attachment is downloadable whatever the format (PDF, Word,
-  Excel, PowerPoint, MP3, MP4, ZIP, …), with a file-type badge and size. Audio and
-  video also get a native player
-- **Request a quote** — fields come from the database, not the code
+  `fields.json`, downloads, related projects
+- **Brochure or text** — each project chooses how it reads: typed text, a brochure
+  shown in its place, or the brochure with the text underneath
+- **Downloads** — every file a project attaches is downloadable whatever the format
+  (PDF, Word, Excel, PowerPoint, MP3, MP4, ZIP, …), with a file-type badge and its real
+  size. Audio and video also get a native player.
 - **Bilingual** — `/th/…` and `/en/…`, per-locale slugs, hreflang + canonical tags,
   language switcher that resolves to the right document rather than swapping the prefix
 - `sitemap.xml` and `robots.txt`
 
-### Admin (`/admin`)
+---
 
-| Page | Does |
-|---|---|
-| Dashboard | New quotes, publish counts, per-language translation gaps |
-| Projects | Full CRUD, TH/EN tabs with completeness dots, block editor, feature list, media, categories with a primary flag, custom fields, SEO, publish per language |
-| Categories | CRUD with per-language name/slug/description; delete is blocked while in use |
-| Media | Upload, browse, delete (blocked while referenced) |
-| Quote requests | Inbox with search and status filter, detail view with the frozen field snapshot, status workflow, internal notes |
-| Custom fields | Add project attributes without a migration — they appear in the editor and on the detail page |
-| Settings | Module toggles, site/hero/contact/SEO copy per language, translation fallback policy |
+## Why there is no database
 
-The admin UI itself is bilingual too (toggle at the bottom of the sidebar), independent
-of the content language being edited.
+The earlier build carried PostgreSQL, Prisma, an authenticated `/admin` panel, a media
+library and a quote-request inbox. All of it was removed:
+
+- **Content moved to JSON.** `src/lib/data.ts` reads the files; `src/lib/content.ts`
+  keeps exactly the API the pages already used (`getProjects`, `getProjectBySlug`,
+  `getCategoriesWithCounts`, …), so the pages were barely touched.
+- **The admin panel is gone.** Editing means editing a JSON file and committing it.
+- **"Request a quote" is gone** — no form, no `/quote` route, no inbox. A project that
+  wants to publish its quotation attaches the document to itself instead, and it appears
+  under Downloads on the project page.
+- **Uploads are gone.** Files are put in `public/files/<project folder>/` by hand.
+
+What this buys: the site deploys anywhere that can serve static output, has no
+migrations, no credentials, no backup story, and no upload attack surface. What it
+costs: content edits are a developer task and a redeploy, not a login.
 
 ---
 
 ## How the flexible bits work
 
-**Custom fields.** `Settings → Custom fields` writes a row to `field_definitions`
-(key, type, per-language labels, choices, translatable or not). The project editor
-generates inputs from it and values are stored in a `custom` JSONB column — on the
-project for shared values, on the translation row for per-language ones. No migration
-needed to add "Coverage area" or "Sensor type".
+**Custom fields.** `fields.json` describes a spec field (key, type, per-language label,
+choices, translatable or not). Values live under `custom` — on the project for shared
+values, on the translation for per-language ones. Adding "Coverage area" or
+"Sensor type" is a JSON edit, not a schema change.
 
-**Quote form.** `form_fields` + `form_field_translations` drive the public form.
-Fields with `mapsToColumn` land in real columns (`name`, `email`, `phone`, `message`)
-so the inbox can search them; everything else goes to `data` JSONB. Every submission
-also stores a `fieldSnapshot` of the labels and types **as they were at submit time**,
-so editing the form later never makes old submissions unreadable.
+**Rich text.** Descriptions are a typed block array (`paragraph`, `heading`, `list`,
+`quote`) rendered as real elements — nothing goes through `dangerouslySetInnerHTML`,
+so content cannot inject markup.
 
-**Modules.** `settings.modules.*` gate optional parts of the site — currently the
-quote form. Turning one off removes the route (404), the nav entry, and the related
-UI — verified end to end. Adding a module back means a key here plus a route guard.
+**Brochure instead of typed text.** Not every project gets written up — plenty already
+exist as a designed PDF or a set of page images. `infoDisplay` (`text` / `brochure` /
+`both`) decides what the detail page shows.
 
-**No pricing.** This build carries no price or pricing-plan concept: no columns on
-`projects`, no `pricing_plans` tables, no `/pricing` route. Projects are presented as
-work, and the call to action is the enquiry form rather than a price. If a future site
-built on this template needs prices, that is an additive change, not an un-picking one.
-
-**Rich text.** Descriptions are stored as a typed block array (`paragraph`, `heading`,
-`list`, `quote`) and rendered as real elements — nothing goes through
-`dangerouslySetInnerHTML`, so admin-entered text cannot inject markup.
-
-**Brochure instead of typed text.** Not every project gets written up — plenty
-already exist as a designed PDF or a set of page images. `projects.infoDisplay`
-(`text` / `brochure` / `both`) decides which the detail page shows, set per project
-under **Presentation** in the editor.
-
-Brochures are stored as ordinary media with `role = 'brochure'` and a `locale` on
-the `project_media` row, because a brochure is a printed artefact — the Thai and
-English ones are different files, not one file with different captions. The lookup
-is: this language's pages → pages marked as shared across languages → the default
-language's, with a visible notice when a reader is being shown another language's
+Brochure entries carry their own `locale`, because a brochure is a printed artefact —
+the Thai and English ones are different files, not one file with different captions.
+The lookup is: this language's pages → pages marked as shared (`"locale": null`) → the
+default language's, with a visible notice when a reader is shown another language's
 brochure. A PDF is embedded in the browser's own viewer; image pages are stacked.
 Either way every page also gets an explicit download, since an embedded PDF is
 unreliable on mobile and unusable to a screen reader.
 
-Choosing `brochure` without uploading one **falls back to the typed text** rather
-than rendering an empty page, so the setting is safe to flip before the file exists.
+Choosing `brochure` with no brochure listed **falls back to the typed text** rather
+than rendering an empty page, so the setting is safe to set before the file exists.
 
-**Attachments.** Any file type is accepted. The upload check in
-`src/lib/file-types.ts` is a *denylist*, not an allowlist, so a format nobody
-anticipated needs no code change — only executables, installers, shell/script files
-and server-side sources are refused, because a public download link is exactly how
-such a file would get distributed. Office macro formats (`.xlsm`, `.docm`) are
-refused with a message pointing at the macro-free equivalent. Set
-`UPLOAD_ALLOW_ALL_TYPES=true` to lift this entirely, and `UPLOAD_MAX_MB` to change
-the 100MB default.
-
-Downloads are served through `/api/media/[id]`, which decides inline-vs-download per
-type: images, audio, video and PDFs render in the tab, everything else is sent as an
-attachment so an uploaded `.html` or `.svg` can never execute against this origin
-(both also get a locked-down CSP). `?download=1` forces a download of anything.
-The route supports HTTP Range requests, so seeking in an audio or video file works
-instead of refetching from the start, and filenames are emitted with RFC 5987
-encoding so Thai names survive.
+**Attachments.** Any file type works — the badge and the audio/video player are derived
+from the extension. A missing file degrades to "no size shown" rather than breaking the
+page, so you can list a file before it is delivered.
 
 ---
 
 ## Re-using this for another client
 
 1. **Theme** — every colour, font and radius is in the `@theme` block at the top of
-   `src/app/globals.css`. The current skin follows Thailand's Smart City Office
-   site: navy `#173b6b` with a yellow `#fff200` accent, squared corners, Kanit for
-   headings and Sarabun for body text (both cover Thai and Latin, so the two
-   locales share one vertical rhythm). Swap the `--color-brand-*` and
-   `--color-accent-*` ramps and the whole site follows. Note that `accent-400` is a
-   fill and rule colour only — it fails contrast as text on white, so keep it behind
-   navy text rather than on it.
-2. **Content** — all in Postgres. A new site is a fresh database plus a seed.
-3. **Modules** — toggle in Settings.
-4. **Domain vocabulary** — lives in `field_definitions` rows, not in the schema.
-5. **Languages** — the `locales` table is data. Adding a third language means adding a
-   row, translation rows, and one entry in `src/i18n/config.ts` (plus a message
-   catalogue in `src/i18n/messages/`).
+   `src/app/globals.css`. The current skin follows Thailand's Smart City Office site:
+   navy `#173b6b` with a yellow `#fff200` accent, squared corners, Kanit for headings
+   and Sarabun for body text (both cover Thai and Latin, so the two locales share one
+   vertical rhythm). Swap the `--color-brand-*` and `--color-accent-*` ramps and the
+   whole site follows. Note that `accent-400` is a fill and rule colour only — it fails
+   contrast as text on white, so keep it behind navy text rather than on it.
+2. **Content** — replace `src/data/*.json` and `public/files/`.
+3. **Domain vocabulary** — lives in `fields.json`, not in the code.
+4. **Languages** — adding a third language means a key in each `translations` object,
+   one entry in `src/i18n/config.ts`, and a message catalogue in `src/i18n/messages/`.
 
 ---
 
 ## Implementation notes
 
-A few places where this deviates from `docs/ARCHITECTURE.md`, all deliberate:
-
-- **Auth is hand-rolled** (`jose` JWT in an httpOnly cookie + bcrypt), not Auth.js.
-  For a single-role admin panel this is ~80 lines with no beta dependency, and it is
-  edge-compatible so the middleware can gate `/admin` without touching the database.
 - **i18n is hand-rolled**, not `next-intl` — locale routing is a small middleware and
   the message catalogues are plain JSON. Fewer moving parts for two locales.
-- **The rich-text editor is a block editor**, not Tiptap. Same stored shape as the doc
-  describes (portable JSON), much smaller client bundle, and XSS-free by construction.
-- **Emails are camelCase in the database.** The design draft used `citext` and
-  snake_case columns; the implemented schema normalises emails to lowercase in
-  application code instead, so the database needs no extension step. Table names are
-  snake_cased via `@@map`, column names are not — relevant if you write raw SQL
-  (see the quoted identifiers in `prisma/seed.ts`).
+- **The rich-text format is a typed block array**, not HTML — portable, and XSS-free by
+  construction.
 - **Listing queries filter and paginate in memory.** This keeps the per-locale publish
   and fallback rules in one readable place and is fine for a few thousand projects.
-  Move to SQL-level pagination if the catalogue gets much bigger.
-
-### Not built yet
-
-- **Admin user management UI** — the seeded admin is the only account; adding more
-  means a seed edit or a direct insert. The `admin_users` table and the `admin`/`editor`
-  role split are in place. The sidebar deliberately has no "Users" entry, since
-  `/admin/users` does not exist — re-add it in `AdminNav.tsx` when it does.
-- **Image thumbnails and video posters** — uploads are stored and served as-is, so a
-  gallery of large photos ships full-size bytes to the browser.
-- **Virus scanning** — uploads are type-checked, not scanned. Worth adding a
-  ClamAV or hosted-scanner pass before accepting files from anyone but staff.
-- **Email notifications** — `settings.quote.notifyEmails` is stored and editable, but
-  nothing sends yet. There is a marked `TODO` in `src/app/actions/quote.ts`.
-- **Homepage/CMS page editing** — the `pages` tables exist; homepage copy is currently
-  edited through Settings rather than a block-based page builder.
-- **Rate limiting is in-process** — fine for one instance, needs Redis (or Cloudflare
-  Turnstile) before running behind more than one node.
+- **JSON is read per request and cached per render** (`react.cache`), so a page render
+  reads each file once. On the prerendered routes those reads happen at build time.
+- **`src/i18n/messages/*.json` still carry the old quote-form strings.** They are unused
+  and harmless; delete them when you next touch the catalogues.
 
 ### Before production
 
-- Set a real `AUTH_SECRET` (32+ random chars) and a real `NEXT_PUBLIC_SITE_URL`.
-- Replace `prisma db push` with proper migrations (`prisma migrate dev`) and add the
-  partial unique indexes currently created in `prisma/seed.ts` to the first migration.
-- Move uploads to object storage — swap the adapter in `src/lib/media.ts`; the
-  `/api/media/[id]` URLs stay the same.
-- PDPA: the consent checkbox is on the form and its text is captured in the snapshot.
-  Still needed are a retention/purge job and an audited CSV export.
+- Set a real `NEXT_PUBLIC_SITE_URL` — `sitemap.xml` and canonical tags use it.
+- Remember the rebuild rule above, or run the site with `next dev` behind a proxy if you
+  genuinely need live content edits.
