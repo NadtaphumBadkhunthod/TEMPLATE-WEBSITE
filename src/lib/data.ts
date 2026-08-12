@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { readFile, stat } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 /**
@@ -106,6 +106,83 @@ export const loadFields = cache(() => readJson<FieldData[]>("fields.json", []));
 export const loadSettingsFile = cache(() =>
   readJson<Record<string, unknown>>("settings.json", {}),
 );
+/** Heading to show for each sub-folder name, per language. */
+export const loadFileGroups = cache(() =>
+  readJson<Record<string, Localised>>("file-groups.json", {}),
+);
+
+// ---------------------------------------------------------------- folder scan
+
+/** A file found on disk under a project's folder rather than listed in JSON. */
+export type ScannedFile = {
+  /** Path under `public/`, spelled exactly as the file is named on disk. */
+  file: string;
+  /** Sub-folder it sits in, relative to the project folder; "" = the top level. */
+  group: string;
+  /** File name, extension included. */
+  name: string;
+  sizeBytes: number;
+};
+
+/** Housekeeping files that live in the folder but are not content. */
+const IGNORED_FILES = new Set([".gitkeep", "thumbs.db", "desktop.ini"]);
+
+/**
+ * Lists every file under `public/files/<folder>/`, recursively.
+ *
+ * This is what makes a project's downloads self-maintaining: dropping a file into
+ * the folder is the whole job, and whichever sub-folder it lands in becomes the
+ * heading it is listed under. A missing folder yields [] rather than an error, so
+ * a project that has no files yet still renders.
+ */
+export const scanProjectFiles = cache(
+  async (folder: string): Promise<ScannedFile[]> => {
+    // The folder name comes from JSON, so treat it as untrusted input.
+    if (!folder || folder.includes("..") || path.isAbsolute(folder)) return [];
+
+    const found: ScannedFile[] = [];
+
+    async function walk(dir: string, group: string): Promise<void> {
+      let entries;
+      try {
+        entries = await readdir(dir, { withFileTypes: true });
+      } catch {
+        return; // the folder does not exist yet — that is not an error
+      }
+
+      for (const entry of entries) {
+        // Skips .gitkeep and friends, and keeps hidden files out of the site.
+        if (entry.name.startsWith(".")) continue;
+        if (IGNORED_FILES.has(entry.name.toLowerCase())) continue;
+
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          await walk(full, group ? `${group}/${entry.name}` : entry.name);
+          continue;
+        }
+        if (!entry.isFile()) continue;
+
+        const relative = path.relative(publicDir, full).split(path.sep).join("/");
+        found.push({
+          file: `/${relative}`,
+          group,
+          name: entry.name,
+          sizeBytes: (await stat(full)).size,
+        });
+      }
+    }
+
+    await walk(path.join(publicDir, "files", folder), "");
+
+    // Top-level files first, then each sub-folder in name order. `numeric` so
+    // "หน้า 2" sorts before "หน้า 10" instead of after it.
+    const collator = new Intl.Collator(["th", "en"], { numeric: true });
+    return found.sort(
+      (a, b) =>
+        collator.compare(a.group, b.group) || collator.compare(a.name, b.name),
+    );
+  },
+);
 
 // ---------------------------------------------------------------- file helpers
 
@@ -171,6 +248,22 @@ export function publicUrl(file: string): string {
   if (isExternal(file)) return file;
   const alreadyEncoded = /%[0-9a-f]{2}/i.test(file);
   return alreadyEncoded ? file : encodeURI(file);
+}
+
+/**
+ * URL that streams a file out of `public/` through the app instead of serving it
+ * as a static asset.
+ *
+ * `next start` serves `public/` from a listing taken at build time, so a file
+ * dropped in afterwards would 404 until the next build. This route reads the disk
+ * on every request, which is what lets a newly added file download straight away.
+ * Pass `download` to make the browser save it rather than display it.
+ */
+export function streamUrl(file: string, download = false): string {
+  if (isExternal(file)) return file;
+  const encoded = publicUrl(file);
+  const absolute = encoded.startsWith("/") ? encoded : `/${encoded}`;
+  return `/download${absolute}${download ? "?dl=1" : ""}`;
 }
 
 /**

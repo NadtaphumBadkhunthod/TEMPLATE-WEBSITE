@@ -33,9 +33,10 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Everything except Next internals and static files. `/files` is excluded so
-     * project downloads are served straight from `public/` without a redirect.
+     * Everything except Next internals and static files. `/files` and `/download`
+     * are excluded so project downloads are served as-is, without a locale
+     * prefix being forced onto the URL.
      */
-    "/((?!_next/static|_next/image|files|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!_next/static|_next/image|files|download|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
