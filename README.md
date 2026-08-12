@@ -50,12 +50,18 @@ Everything is in [`src/data/`](src/data/) and documented in
 | `projects.json` | Every project: status, categories, per-language title/summary/body/features, files |
 | `categories.json` | Category list with per-language name and slug |
 | `fields.json` | Custom spec fields shown on the detail page |
+| `file-groups.json` | Per-language headings for the download sub-folders |
 | `settings.json` | Site name, hero copy, contact details, SEO defaults, fallback policy |
 
-> **In production, rerun `npm run build` after editing.** The listing pages are
-> prerendered and Next serves `public/` from a build-time manifest, so neither JSON
-> edits nor newly added files show up on a running `npm start` until you rebuild.
-> `npm run dev` picks both up immediately.
+A project's downloads are not listed anywhere: whatever sits in
+`public/files/<project folder>/` is what the page shows, and each sub-folder becomes a
+heading. Dropping a file in is the whole job.
+
+> **In production, rerun `npm run build` after editing JSON.** The homepage and the
+> project list are prerendered, so edits to them do not show up on a running
+> `npm start` until you rebuild. **Files are the exception** — they are read off the
+> disk per request, so a file added to a project folder appears immediately.
+> `npm run dev` picks up both without a rebuild.
 
 ---
 
@@ -91,7 +97,9 @@ library and a quote-request inbox. All of it was removed:
 - **"Request a quote" is gone** — no form, no `/quote` route, no inbox. A project that
   wants to publish its quotation attaches the document to itself instead, and it appears
   under Downloads on the project page.
-- **Uploads are gone.** Files are put in `public/files/<project folder>/` by hand.
+- **Uploads are gone.** Files are put in `public/files/<project folder>/` by hand — the
+  folder *is* the media library. It is scanned per request and `/download/…` streams
+  what it finds, so copying a file in is the entire publishing step.
 
 What this buys: the site deploys anywhere that can serve static output, has no
 migrations, no credentials, no backup story, and no upload attack surface. What it
@@ -163,5 +171,7 @@ page, so you can list a file before it is delivered.
 ### Before production
 
 - Set a real `NEXT_PUBLIC_SITE_URL` — `sitemap.xml` and canonical tags use it.
-- Remember the rebuild rule above, or run the site with `next dev` behind a proxy if you
-  genuinely need live content edits.
+- Remember the rebuild rule above: adding a file needs no rebuild, editing JSON does.
+- `/download/[...path]` reads from disk on every request and serves only what is under
+  `public/files/`. It is the one route that touches the filesystem — if you put the site
+  behind a CDN, that is the path to give a sensible cache policy.

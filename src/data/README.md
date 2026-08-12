@@ -1,17 +1,19 @@
 # Content
 
 Everything the site shows lives in this folder. There is no database and no admin
-panel — edit these files, put the matching files in `public/files/`, and rebuild.
+panel — edit these files, and put the files a project offers in `public/files/`.
 
-> In `npm run dev` changes appear on reload. In production (`npm start`) the listing
-> pages are prerendered and `public/` is served from a build-time manifest, so
-> **rerun `npm run build`** after editing JSON or adding a file.
+> **Adding a file needs no rebuild.** Downloads are read off the disk per request.
+> **Editing JSON does**, for the homepage and the project list: those pages are
+> prerendered, so rerun `npm run build` after changing them. (In `npm run dev`
+> everything appears on reload.)
 
 | File | Holds |
 |---|---|
 | `projects.json` | Every project |
 | `categories.json` | The category list |
 | `fields.json` | Custom spec fields shown on a project's detail page |
+| `file-groups.json` | Headings for the download sub-folders, per language |
 | `settings.json` | Site name, hero copy, contact details, SEO defaults |
 
 Anything with a `{ "th": …, "en": … }` shape is per-language. A missing language falls
@@ -23,22 +25,60 @@ back to Thai.
 
 This is how a project publishes its quotation now; there is no enquiry form.
 
-1. Put the file in the project's folder: `public/files/<folder>/`, where `<folder>` is
-   the project's `folder` value in `projects.json`.
-2. **Add an entry to that project's `attachments`.** Dropping the file in the folder is
-   not enough on its own — the folder is storage, this list is what the site reads.
-3. `npm run build`.
+**Drop the file into the project's folder. That is the whole job.**
+
+`public/files/<folder>/`, where `<folder>` is the project's `folder` value in
+`projects.json`. Everything in there is listed on the project page and is
+downloadable. No JSON to edit, no rebuild.
+
+### Sub-folders become headings
+
+Sort the files however you like; each sub-folder turns into its own section:
+
+```
+public/files/phuket-traffic-control-centre/
+├── สรุปโครงการ.pdf              → listed under "ไฟล์ทั่วไป"
+├── brochure/
+│   ├── brochure-th.pdf          → listed under "โบรชัวร์"
+│   └── brochure-en.pdf
+├── quotation/
+│   └── ใบเสนอราคา.pdf            → listed under "ใบเสนอราคา"
+└── รายงานประจำปี/
+    └── 2568.pdf                 → listed under "รายงานประจำปี"
+```
+
+A sub-folder named in `file-groups.json` gets that heading in each language. Any other
+name is shown exactly as you typed it — which is why a Thai folder name needs no setup
+at all. Files sitting loose at the top level are grouped under "ไฟล์ทั่วไป".
+
+To add a bilingual heading of your own, add a line to `file-groups.json`:
+
+```jsonc
+{ "warranty": { "th": "ใบรับประกัน", "en": "Warranty" } }
+```
+
+Notes:
+
+- Any format works. The type badge and the file size are read from the real file, and
+  audio/video get a player as well as a download button.
+- Thai filenames and spaces are fine. The name you see on the page is the filename
+  without its extension, and it is what the browser saves the file as.
+- Files starting with `.` are skipped, so `.gitkeep` never shows up.
+- The cover, the gallery images and the brochure are already shown elsewhere on the
+  page, so they are not repeated in the download list.
+
+### Adding a label, or a link to somewhere else
+
+Only needed for the two cases the folder cannot express: renaming a file on the page
+without renaming it on disk, and linking to a file that is not yours. Put those in the
+project's `attachments`, and they are merged into the same list:
 
 ```jsonc
 "folder": "phuket-traffic-control-centre",
 "attachments": [
   {
-    "file": "/files/phuket-traffic-control-centre/quotation.pdf",
-    "label": { "th": "ใบเสนอราคา", "en": "Quotation" }
-  },
-  {
-    "file": "/files/phuket-traffic-control-centre/brochure.pdf",
-    "label": { "th": "โบรชัวร์", "en": "Brochure" }
+    "file": "/files/phuket-traffic-control-centre/quotation/q-2568-11.pdf",
+    "label": { "th": "ใบเสนอราคา (ฉบับล่าสุด)", "en": "Quotation (latest)" }
   },
   {
     "file": "https://example.com/spec-sheet",
@@ -48,29 +88,24 @@ This is how a project publishes its quotation now; there is no enquiry form.
 ```
 
 - `file` is a path from `public/` (starts with `/`) or a full `http(s)://` link.
-- `label` is optional — the filename is used if you leave it out.
-- Any format works. The type badge and the file size are read from the real file, and
-  audio/video get a player as well as a download.
-- A file listed but not yet present still renders; it just shows no size. Nothing breaks.
-
-Thai filenames and spaces work — the path is stored exactly as the file is named and
-encoded when it becomes a link. ASCII names still make for tidier URLs.
+- A file listed here that is also on disk is listed once, with this label, under the
+  sub-folder it lives in.
+- External links get an "open link" button instead of a download.
 
 ### The file does not show up
 
-Check these in order — all four have to be true:
+Check these in order — all three have to be true:
 
 | Check | Where |
 |---|---|
-| The file is listed in `attachments` | `projects.json` — an empty `[]` shows nothing, however many files sit in the folder |
+| The file really is under `public/files/<folder>/` | `<folder>` is the project's `folder` value in `projects.json`, which is not always the same as its slug |
 | `"status": "published"` | `projects.json` — a `draft` project has no page at all, so its files have nowhere to appear |
 | `"isPublished": true` for the language you are viewing | `projects.json` → `translations.th` / `.en` |
-| You rebuilt | `npm run build` (not needed in `npm run dev`) |
 
 To check the file itself independently of any of that, open it directly:
-`http://localhost:3000/files/<folder>/<filename>`. That works as soon as the file is on
-disk and you have rebuilt, whatever the project's status — so a 200 there with nothing
-on the page means the problem is one of the first three rows.
+`http://localhost:3000/download/files/<folder>/<filename>`. That works as soon as the
+file is on disk, whatever the project's status — so a 200 there with nothing on the page
+means the problem is one of the last two rows.
 
 ---
 
@@ -93,7 +128,7 @@ on the page means the problem is one of the first three rows.
   "cover": null,                   // or { "file": "/files/…/cover.jpg", "alt": { "th": "…", "en": "…" } }
   "gallery": [],                   // [{ "file": …, "alt": { … } }] — cover is shown first automatically
   "brochure": [],                  // [{ "file": …, "label": { … }, "locale": "th" | "en" | null }]
-  "attachments": [],               // see above
+  "attachments": [],               // usually empty — the folder is scanned; see above
 
   "custom": { "connectivity": "fiber" },   // non-translatable custom field values
 

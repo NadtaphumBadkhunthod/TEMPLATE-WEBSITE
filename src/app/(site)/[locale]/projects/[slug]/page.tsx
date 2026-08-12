@@ -227,7 +227,7 @@ export default async function ProjectDetailPage({ params }: { params: Params }) 
                   {t("project.attachments")}
                 </h2>
               </div>
-              <AttachmentList attachments={project.attachments} t={t} />
+              <AttachmentList groups={project.attachmentGroups} t={t} />
             </section>
           )}
         </div>

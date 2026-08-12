@@ -1,0 +1,11 @@
+{
+  "brochure": { "th": "โบรชัวร์", "en": "Brochures" },
+  "quotation": { "th": "ใบเสนอราคา", "en": "Quotations" },
+  "spec": { "th": "สเปกและข้อมูลจำเพาะ", "en": "Specifications" },
+  "manual": { "th": "คู่มือการใช้งาน", "en": "Manuals" },
+  "report": { "th": "รายงาน", "en": "Reports" },
+  "certificate": { "th": "ใบรับรอง", "en": "Certificates" },
+  "drawing": { "th": "แบบและผังงาน", "en": "Drawings" },
+  "presentation": { "th": "สไลด์นำเสนอ", "en": "Presentations" },
+  "media": { "th": "ภาพและวิดีโอ", "en": "Photos & video" }
+}

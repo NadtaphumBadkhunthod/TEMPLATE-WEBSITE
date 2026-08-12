@@ -6,9 +6,12 @@ import {
   isExternal,
   loadCategories,
   loadFields,
+  loadFileGroups,
   loadProjects,
   mimeForFile,
   publicUrl,
+  scanProjectFiles,
+  streamUrl,
   type CategoryData,
   type FieldData,
   type Localised,
@@ -43,10 +46,25 @@ export type AttachmentView = {
    * has no extension in it.
    */
   fileName: string | null;
+  /** Streams the file — used as the `src` of the audio and video players. */
   url: string;
+  /** Same file, asked for as a save rather than a preview. */
+  downloadUrl: string;
   isExternal: boolean;
   mimeType: string | null;
   sizeBytes: number | null;
+};
+
+/**
+ * One sub-folder's worth of downloads. Projects that keep everything at the top
+ * level of their folder come back as a single group with an empty key, which the
+ * list renders without a heading.
+ */
+export type AttachmentGroup = {
+  /** Sub-folder path inside the project folder; "" for the top level. */
+  key: string;
+  label: string;
+  files: AttachmentView[];
 };
 
 export type ProjectListItem = {
@@ -92,6 +110,9 @@ export type ProjectDetail = ProjectListItem & {
   body: Block[];
   features: Feature[];
   gallery: { id: string; url: string; alt: string }[];
+  /** Downloads split by sub-folder, in the order they should be shown. */
+  attachmentGroups: AttachmentGroup[];
+  /** The same files in one flat list, for counting and for the JSON-LD. */
   attachments: AttachmentView[];
   specs: { key: string; label: string; value: string }[];
   seoTitle: string | null;
@@ -296,7 +317,7 @@ export async function getProjectBySlug(
   const picked = pickTranslation(row.translations, locale, fallbackPolicy);
   if (!picked) return null;
 
-  const [brochure, gallery, attachments] = await Promise.all([
+  const [brochure, gallery, attachmentGroups] = await Promise.all([
     resolveBrochure(row, locale, t),
     resolveGallery(row, locale, picked.row.title),
     resolveAttachments(row, locale, t),
@@ -312,7 +333,8 @@ export async function getProjectBySlug(
     body: parseBlocks(picked.row.body),
     features: parseFeatures(picked.row.features),
     gallery,
-    attachments,
+    attachmentGroups,
+    attachments: attachmentGroups.flatMap((group) => group.files),
     specs: await resolveSpecs(row, picked.row, locale),
     seoTitle: picked.row.seoTitle,
     seoDescription: picked.row.seoDescription,
@@ -335,25 +357,141 @@ async function resolveGallery(
   }));
 }
 
+/**
+ * One spelling of a path, for comparing entries that came from JSON against ones
+ * that came off the disk. Case and percent-encoding must not make the same file
+ * look like two.
+ */
+function samePathKey(file: string): string {
+  let value = file;
+  try {
+    value = decodeURIComponent(file);
+  } catch {
+    /* malformed escape — compare the literal string */
+  }
+  return value.toLowerCase();
+}
+
+/**
+ * The sub-folder an explicitly listed file sits in, so a hand-written entry lands
+ * under the same heading as one that was scanned. Anything outside the project's
+ * own folder — a shared file, an external link — belongs to the top-level group.
+ */
+function groupOfPath(file: string, folder: string): string {
+  if (isExternal(file)) return "";
+  const prefix = `/files/${folder}/`;
+  const decoded = samePathKey(file);
+  if (!decoded.startsWith(prefix.toLowerCase())) return "";
+  const rest = file.slice(prefix.length);
+  const cut = rest.lastIndexOf("/");
+  return cut > 0 ? rest.slice(0, cut) : "";
+}
+
+/** Heading for a sub-folder: the translated name if one is defined, else as typed. */
+function groupHeading(
+  key: string,
+  labels: Record<string, Localised>,
+  locale: Locale,
+  t: Translator,
+): string {
+  if (!key) return t("project.generalFiles");
+  const lookup = labels[key.toLowerCase()] ?? labels[key];
+  return pickLocalised(lookup, locale) ?? key.split("/").join(" / ");
+}
+
+/**
+ * Builds the download list for a project.
+ *
+ * Two sources feed it. Files sitting in `public/files/<folder>/` are picked up
+ * automatically, so adding one is a matter of dropping it in; entries written in
+ * `projects.json` are still honoured on top, which is how a file gets a
+ * hand-written label or how an external link joins the list. Where both describe
+ * the same file the JSON entry wins, and anything already shown elsewhere on the
+ * page — the cover, the gallery, the brochure — is left out rather than repeated.
+ */
 async function resolveAttachments(
   project: ProjectData,
   locale: Locale,
   t: Translator,
-): Promise<AttachmentView[]> {
-  return Promise.all(
-    project.attachments.map(async (item, index) => {
+): Promise<AttachmentGroup[]> {
+  const [scanned, groupLabels] = await Promise.all([
+    scanProjectFiles(project.folder),
+    loadFileGroups(),
+  ]);
+
+  const shownElsewhere = new Set(
+    [project.cover, ...project.gallery, ...project.brochure]
+      .filter((file): file is ProjectFile => Boolean(file))
+      .map((file) => samePathKey(file.file)),
+  );
+  const listedInJson = new Set(project.attachments.map((f) => samePathKey(f.file)));
+
+  type Candidate = { item: ProjectFile; group: string; sizeBytes: number | null };
+
+  const candidates: Candidate[] = project.attachments.map((item) => ({
+    item,
+    group: groupOfPath(item.file, project.folder),
+    sizeBytes: null, // measured below, same as before
+  }));
+
+  for (const hit of scanned) {
+    const key = samePathKey(hit.file);
+    if (listedInJson.has(key) || shownElsewhere.has(key)) continue;
+    candidates.push({
+      item: { file: hit.file },
+      group: hit.group,
+      // Already stat'ed during the scan; no need to touch the disk twice.
+      sizeBytes: hit.sizeBytes,
+    });
+  }
+
+  const views = await Promise.all(
+    candidates.map(async ({ item, group, sizeBytes }, index): Promise<
+      AttachmentView & { group: string }
+    > => {
       const fileName = fileNameOf(item.file);
       return {
         id: `${project.id}-attachment-${index}`,
-        label: pickLocalised(item.label, locale) ?? fileName ?? t("project.download"),
+        label:
+          pickLocalised(item.label, locale) ??
+          // An unlabelled file reads better without its extension repeated —
+          // the badge beside it already says what type it is.
+          stripExtension(fileName) ??
+          t("project.download"),
         fileName,
-        url: publicUrl(item.file),
+        url: streamUrl(item.file),
+        downloadUrl: streamUrl(item.file, true),
         isExternal: isExternal(item.file),
         mimeType: mimeForFile(item.file),
-        sizeBytes: await fileSize(item.file),
+        sizeBytes: sizeBytes ?? (await fileSize(item.file)),
+        group,
       };
     }),
   );
+
+  const byGroup = new Map<string, AttachmentView[]>();
+  for (const { group, ...view } of views) {
+    const bucket = byGroup.get(group);
+    if (bucket) bucket.push(view);
+    else byGroup.set(group, [view]);
+  }
+
+  const collator = new Intl.Collator([locale, defaultLocale], { numeric: true });
+  return [...byGroup.entries()]
+    // The top-level group leads; named folders follow in name order.
+    .sort(([a], [b]) => (!a ? -1 : !b ? 1 : collator.compare(a, b)))
+    .map(([key, files]) => ({
+      key,
+      label: groupHeading(key, groupLabels, locale, t),
+      files,
+    }));
+}
+
+/** "รายงานประจำปี.pdf" -> "รายงานประจำปี". Returns null for a nameless file. */
+function stripExtension(fileName: string | null): string | null {
+  if (!fileName) return null;
+  const dot = fileName.lastIndexOf(".");
+  return dot > 0 ? fileName.slice(0, dot) : fileName;
 }
 
 /**
@@ -389,8 +527,8 @@ async function resolveBrochure(
       return {
         id: `${project.id}-brochure-${index}`,
         kind: mime?.startsWith("image/") ? "image" : "pdf",
-        url: publicUrl(item.file),
-        downloadUrl: publicUrl(item.file),
+        url: streamUrl(item.file),
+        downloadUrl: streamUrl(item.file, true),
         label: pickLocalised(item.label, locale) ?? fileName ?? t("project.brochure"),
         fileName,
         mimeType: mime,
