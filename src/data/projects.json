@@ -584,5 +584,457 @@
         "isPublished": true
       }
     }
+  },
+  {
+    "id": "0e5f4a52-6c1b-4d8e-9a37-2b6c1f0a4d11",
+    "status": "published",
+    "sortOrder": 6,
+    "publishedAt": "2026-08-12T00:00:00.000",
+    "isFeatured": false,
+    "infoDisplay": "text",
+    "folder": "tha-tum-public-communication",
+    "categories": [
+      {
+        "id": "659f6c46-8511-407e-9ffb-44c8a6a291ec",
+        "isPrimary": true
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {},
+    "translations": {
+      "th": {
+        "slug": "ระบบสื่อสารและประชาสัมพันธ์ข้อมูลข่าวสารท่าตูม",
+        "title": "โครงการจัดหาครุภัณฑ์ระบบสื่อสารและประชาสัมพันธ์ข้อมูลข่าวสาร",
+        "summary": "คลังสื่อดิจิทัลส่วนกลาง พร้อมระบบกระจายและแสดงผลสื่อในพื้นที่สาธารณะ รองรับนโยบาย Smart Thatoom",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "โครงการจัดหาครุภัณฑ์ระบบสื่อสารและประชาสัมพันธ์ข้อมูลข่าวสาร รองรับนโยบาย Smart Thatoom ประกอบด้วยระบบงาน 4 ส่วน ทำงานร่วมกันตั้งแต่การจัดเก็บสื่อต้นทาง ไปจนถึงการแสดงผลที่จุดปลายทางในพื้นที่สาธารณะ"
+          },
+          {
+            "type": "paragraph",
+            "text": "ส่วนแรกคือคลังสื่อดิจิทัลส่วนกลาง จัดเก็บและจัดหมวดหมู่แฟ้มข้อมูลทุกประเภททั้งวิดีโอ ภาพนิ่ง เสียง และเอกสาร พร้อมระบบตรวจสอบสิทธิ์ตามบทบาทและบันทึกประวัติการใช้งาน ส่วนที่สองเป็นแพลตฟอร์มบูรณาการและกระจายสื่อ ซึ่งจัดตารางเผยแพร่ กำหนดกลุ่มเป้าหมาย และเชื่อมต่อระบบภายนอกผ่าน API มาตรฐาน"
+          },
+          {
+            "type": "paragraph",
+            "text": "ส่วนที่สามคือแพลตฟอร์มบริหารจัดการสื่อแสดงผลสาธารณะ รองรับการส่งเนื้อหาแบบเจาะจงพื้นที่ การถ่ายทอดสด และการประมวลผลที่จุดแสดงผลด้วย Edge Computing และส่วนที่สี่เป็นระบบศูนย์กลางบริหารจัดการผู้ใช้งานและการสื่อสารสารสนเทศ ที่ควบคุมสิทธิ์แบบลำดับชั้นและกระจายการแจ้งเตือนข้ามช่องทาง"
+          }
+        ],
+        "features": [
+          {
+            "text": "ระบบบริหารจัดการคลังสื่อดิจิทัลส่วนกลาง (Central Digital Media Management System)"
+          },
+          {
+            "text": "แพลตฟอร์มบูรณาการและกระจายสื่อมัลติมีเดีย (Multimedia Distribution Platform)"
+          },
+          {
+            "text": "แพลตฟอร์มบริหารจัดการสื่อแสดงผลสาธารณะ (Public Display Management Platform)"
+          },
+          {
+            "text": "ระบบศูนย์กลางบริหารจัดการผู้ใช้งานและการสื่อสารสารสนเทศ (Central User & Communication System)"
+          },
+          {
+            "text": "ควบคุมสิทธิ์ตามบทบาท (RBAC) พร้อม Audit Log ทุกการใช้งาน"
+          },
+          {
+            "text": "รองรับ Live Streaming และระบบกระจายเสียงสาธารณะ"
+          }
+        ],
+        "custom": {
+          "coverage_area": "องค์การบริหารส่วนตำบลท่าตูม อำเภอศรีมหาโพธิ จังหวัดปราจีนบุรี"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "tha-tum-public-communication-system",
+        "title": "Public Communication and Information Broadcasting System",
+        "summary": "A central digital media library with distribution and public-display platforms, under the Smart Thatoom programme.",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "A procurement project for the public communication and information broadcasting system supporting the Smart Thatoom programme. It comprises four systems working together, from storing source media through to display at public endpoints."
+          },
+          {
+            "type": "paragraph",
+            "text": "The first is a central digital media library that stores and categorises every kind of file — video, stills, audio and documents — with role-based access control and full activity logging. The second is a multimedia distribution platform that schedules publication, targets audiences, and connects to external systems over standard APIs."
+          },
+          {
+            "type": "paragraph",
+            "text": "The third is a public display management platform supporting location-targeted content, live streaming, and edge processing at the display point. The fourth is a central user and communication system that enforces hierarchical permissions and pushes notifications across channels."
+          }
+        ],
+        "features": [
+          {
+            "text": "Central Digital Media Management System"
+          },
+          {
+            "text": "Multimedia Distribution Platform"
+          },
+          {
+            "text": "Public Display Management Platform"
+          },
+          {
+            "text": "Central User & Communication System"
+          },
+          {
+            "text": "Role-based access control with full audit logging"
+          },
+          {
+            "text": "Live streaming and public address broadcasting"
+          }
+        ],
+        "custom": {
+          "coverage_area": "Tha Tum Subdistrict Administrative Organisation, Si Maha Phot, Prachinburi"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
+  },
+  {
+    "id": "1a7d3c94-8f22-4e5b-b0c6-7d4e2a9b3c22",
+    "status": "published",
+    "sortOrder": 7,
+    "publishedAt": "2026-08-12T00:00:00.000",
+    "isFeatured": false,
+    "infoDisplay": "text",
+    "folder": "tha-tum-super-app",
+    "categories": [
+      {
+        "id": "659f6c46-8511-407e-9ffb-44c8a6a291ec",
+        "isPrimary": true
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {},
+    "translations": {
+      "th": {
+        "slug": "แอปพลิเคชันกลางสมาร์ทท่าตูม",
+        "title": "โครงการจัดหาครุภัณฑ์ระบบโครงสร้างพื้นฐานแอปพลิเคชันสมาร์ทท่าตูม",
+        "summary": "แอปพลิเคชันศูนย์กลางบริการประชาชน บนโครงสร้างแบบแยกส่วนที่เพิ่มบริการใหม่ได้โดยไม่กระทบระบบเดิม",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "โครงการจัดหาครุภัณฑ์ระบบโครงสร้างพื้นฐานแอปพลิเคชันสมาร์ทท่าตูม เพื่อรองรับการพัฒนาเมืองอัจฉริยะ Smart Thatoom รวมบริการของหน่วยงานไว้ในแอปเดียว ลดความซับซ้อนในการติดต่อราชการของประชาชน"
+          },
+          {
+            "type": "paragraph",
+            "text": "ฐานของระบบคือ IdentiCore ซึ่งบริหารบัญชีและสิทธิ์ผู้ใช้งานแบบรวมศูนย์ รองรับการยืนยันตัวตนหลายรูปแบบ ทั้ง OTP และการยืนยันหลายขั้นตอน พร้อมกลไกคุ้มครองข้อมูลส่วนบุคคลในตัว ถัดขึ้นมาคือ LinkFrame แพลตฟอร์มโครงสร้างพื้นฐานแบบแยกส่วน ที่ให้แต่ละบริการทำงานอิสระและเพิ่มหรือลดโมดูลได้โดยไม่กระทบระบบหลัก"
+          },
+          {
+            "type": "paragraph",
+            "text": "SignalWave รับหน้าที่สื่อสารและแจ้งเตือนข้ามช่องทาง ทั้ง Push Notification อีเมล SMS และการแจ้งเตือนภายในแอป โดยกำหนดกลุ่มเป้าหมายตามบทบาท พื้นที่ หรือความสนใจได้ และ CivicHub คือแอปพลิเคชันหน้าบ้านที่ประชาชนใช้จริง รองรับทั้ง iOS และ Android"
+          }
+        ],
+        "features": [
+          {
+            "text": "IdentiCore — ระบบศูนย์กลางบริหารบัญชีและสิทธิ์ผู้ใช้งาน"
+          },
+          {
+            "text": "LinkFrame — แพลตฟอร์มโครงสร้างพื้นฐานเชื่อมต่อบริการแบบแยกส่วน"
+          },
+          {
+            "text": "SignalWave — ระบบสื่อสารและแจ้งเตือนหลายช่องทาง"
+          },
+          {
+            "text": "CivicHub — แอปพลิเคชันศูนย์กลางบริการประชาชน"
+          },
+          {
+            "text": "ยืนยันตัวตนด้วย OTP และการยืนยันหลายขั้นตอน"
+          },
+          {
+            "text": "สถาปัตยกรรม Microservice เพิ่มบริการใหม่ได้โดยไม่กระทบของเดิม"
+          }
+        ],
+        "custom": {
+          "coverage_area": "องค์การบริหารส่วนตำบลท่าตูม อำเภอศรีมหาโพธิ จังหวัดปราจีนบุรี"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "smart-thatoom-super-app",
+        "title": "Smart Thatoom Super App Infrastructure",
+        "summary": "A single citizen-services app on a modular platform, where new services can be added without disturbing the ones already running.",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "A procurement project for the application infrastructure behind the Smart Thatoom smart-city programme. It gathers the authority’s services into one app, so residents have a single place to deal with local government."
+          },
+          {
+            "type": "paragraph",
+            "text": "IdentiCore forms the base, managing accounts and permissions centrally with multiple identity-verification methods including OTP and multi-factor confirmation, and personal-data protection built in. Above it, LinkFrame is a modular infrastructure platform that lets each service run independently, so modules can be added or removed without touching the core."
+          },
+          {
+            "type": "paragraph",
+            "text": "SignalWave handles cross-channel communication — push notifications, email, SMS and in-app alerts — targeted by role, area or interest. CivicHub is the app residents actually use, running on both iOS and Android."
+          }
+        ],
+        "features": [
+          {
+            "text": "IdentiCore — central account and permission management"
+          },
+          {
+            "text": "LinkFrame — modular service-integration platform"
+          },
+          {
+            "text": "SignalWave — multi-channel communication and alerting"
+          },
+          {
+            "text": "CivicHub — citizen services app"
+          },
+          {
+            "text": "OTP and multi-factor identity verification"
+          },
+          {
+            "text": "Microservice architecture; new services add without disruption"
+          }
+        ],
+        "custom": {
+          "coverage_area": "Tha Tum Subdistrict Administrative Organisation, Si Maha Phot, Prachinburi"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
+  },
+  {
+    "id": "2b8e4d05-9a33-4f6c-c1d7-8e5f3b0c4d33",
+    "status": "published",
+    "sortOrder": 8,
+    "publishedAt": "2026-08-12T00:00:00.000",
+    "isFeatured": false,
+    "infoDisplay": "text",
+    "folder": "tha-tum-war-room",
+    "categories": [
+      {
+        "id": "fc5bcb68-6f08-4b95-a7d8-6143b3e36ede",
+        "isPrimary": true
+      },
+      {
+        "id": "659f6c46-8511-407e-9ffb-44c8a6a291ec",
+        "isPrimary": false
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {},
+    "translations": {
+      "th": {
+        "slug": "ศูนย์ข้อมูลและศูนย์เผชิญเหตุท่าตูม",
+        "title": "โครงการจัดหาครุภัณฑ์ระบบศูนย์ข้อมูลและศูนย์เผชิญเหตุ (War Room)",
+        "summary": "ห้องเผชิญเหตุพร้อมจอ Video Wall 8 จอ และแพลตฟอร์มวิเคราะห์ข้อมูลเมืองแบบเรียลไทม์",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "โครงการจัดหาครุภัณฑ์ระบบศูนย์ข้อมูลและศูนย์เผชิญเหตุ (War Room) รองรับนโยบาย Smart Thatoom ครอบคลุมทั้งงานปรับปรุงห้อง ครุภัณฑ์แสดงผล และระบบซอฟต์แวร์วิเคราะห์ข้อมูล"
+          },
+          {
+            "type": "paragraph",
+            "text": "หัวใจของระบบคือแพลตฟอร์มบริหารจัดการและวิเคราะห์ข้อมูลเมือง ซึ่งรวบรวมข้อมูลเชิงพื้นที่และเวลาจากหลายแหล่ง ทั้งฐานข้อมูลหลักขององค์กรและ API ของหน่วยงานภายนอก ผ่านมาตรฐาน API Gateway, REST API, GraphQL, WebSocket และ Server-Sent Events แล้วประมวลผลแบบ Stream Processing เพื่อแสดงผลทันที"
+          },
+          {
+            "type": "paragraph",
+            "text": "แดชบอร์ดรองรับการแสดงผลหลายรูปแบบ ทั้งแผนภูมิ แผนที่ความร้อน และการแสดงจุดพิกัด โดยจัดข้อมูลเป็นชั้น (Layer) ที่เปิด-ปิดและซ้อนทับกันได้ พร้อมระบบแจ้งเตือนอัตโนมัติเมื่อค่าตัวชี้วัดเข้าเกณฑ์วิกฤต และโหมดการทำงานฉุกเฉินที่จัดลำดับความสำคัญของทรัพยากรเพื่อรักษาความพร้อมใช้งาน"
+          }
+        ],
+        "features": [
+          {
+            "text": "ระบบบริหารจัดการและวิเคราะห์ข้อมูลเมือง (Urban Data Management and Analytics Platform)"
+          },
+          {
+            "text": "จอ Video Wall ขนาด 55 นิ้ว จำนวน 8 จอ พร้อมอุปกรณ์ควบคุม"
+          },
+          {
+            "text": "รับข้อมูลผ่าน API Gateway, REST, GraphQL, WebSocket และ SSE"
+          },
+          {
+            "text": "แดชบอร์ดแบบแบ่งชั้นข้อมูล ซ้อนทับเพื่อวิเคราะห์ความสัมพันธ์ได้"
+          },
+          {
+            "text": "แจ้งเตือนอัตโนมัติพร้อมพิกัดแผนที่เมื่อเกิดเหตุผิดปกติ"
+          },
+          {
+            "text": "โหมดฉุกเฉิน (Emergency Mode) เมื่อตัวชี้วัดเข้าเกณฑ์วิกฤต"
+          }
+        ],
+        "custom": {
+          "coverage_area": "องค์การบริหารส่วนตำบลท่าตูม อำเภอศรีมหาโพธิ จังหวัดปราจีนบุรี"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "tha-tum-war-room",
+        "title": "Data Centre and Emergency Response Room (War Room)",
+        "summary": "An emergency response room with an eight-panel video wall and a real-time urban data analytics platform.",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "A procurement project for the data centre and emergency response room (War Room) supporting the Smart Thatoom programme, covering room refurbishment, display hardware and the analytics software."
+          },
+          {
+            "type": "paragraph",
+            "text": "At its centre is an urban data management and analytics platform that gathers spatial and temporal data from many sources — the authority’s own databases and external agency APIs — over an API gateway, REST, GraphQL, WebSocket and server-sent events, then processes it as a stream for immediate display."
+          },
+          {
+            "type": "paragraph",
+            "text": "The dashboard presents that data as charts, heat maps and plotted coordinates, organised into layers that can be toggled and overlaid to reveal relationships. Automatic alerts fire when an indicator crosses a critical threshold, and an emergency mode reprioritises resources to keep the system responsive when it matters most."
+          }
+        ],
+        "features": [
+          {
+            "text": "Urban Data Management and Analytics Platform"
+          },
+          {
+            "text": "Eight 55-inch video wall panels with controller"
+          },
+          {
+            "text": "Ingest over API gateway, REST, GraphQL, WebSocket and SSE"
+          },
+          {
+            "text": "Layered dashboard with overlay analysis"
+          },
+          {
+            "text": "Automatic alerts with map coordinates on anomalies"
+          },
+          {
+            "text": "Emergency mode when indicators reach critical thresholds"
+          }
+        ],
+        "custom": {
+          "coverage_area": "Tha Tum Subdistrict Administrative Organisation, Si Maha Phot, Prachinburi"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
+  },
+  {
+    "id": "3c9f5e16-0b44-4a7d-d2e8-9f604c1d5e44",
+    "status": "published",
+    "sortOrder": 9,
+    "publishedAt": "2026-08-12T00:00:00.000",
+    "isFeatured": false,
+    "infoDisplay": "text",
+    "folder": "tha-tum-city-data-platform",
+    "categories": [
+      {
+        "id": "659f6c46-8511-407e-9ffb-44c8a6a291ec",
+        "isPrimary": true
+      }
+    ],
+    "cover": null,
+    "gallery": [],
+    "brochure": [],
+    "attachments": [],
+    "custom": {},
+    "translations": {
+      "th": {
+        "slug": "ระบบฐานข้อมูลเมืองท่าตูม",
+        "title": "โครงการจัดหาครุภัณฑ์ระบบฐานข้อมูลเมือง (City Data Platform)",
+        "summary": "ฐานข้อมูลกลางของเมือง พร้อมระบบแผนที่ GIS ระบบแลกเปลี่ยนข้อมูล และแดชบอร์ดวิเคราะห์",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "โครงการจัดหาครุภัณฑ์ระบบฐานข้อมูลเมืองเพื่อรองรับการพัฒนาเมืองอัจฉริยะ (City Data Platform) รองรับนโยบาย Smart Thatoom ประกอบด้วยระบบงาน 4 ส่วนบนโครงสร้างพื้นฐานเดียวกัน"
+          },
+          {
+            "type": "paragraph",
+            "text": "ระบบจัดการข้อมูลและศูนย์ข้อมูลกลางรวบรวมข้อมูลจากหลายแหล่งไว้ที่เดียว ทั้งข้อมูลทั่วไป ข้อมูลจากอุปกรณ์ IoT และข้อมูลที่รับผ่าน API รองรับการประมวลผลทั้งแบบต่อเนื่องสำหรับงานเรียลไทม์ และแบบเป็นชุดสำหรับข้อมูลย้อนหลัง บนสถาปัตยกรรม Microservices ที่ขยายขนาดได้"
+          },
+          {
+            "type": "paragraph",
+            "text": "ระบบสารสนเทศแผนที่และข้อมูลเชิงพื้นที่จัดการชั้นข้อมูลแบบ Vector และ Raster พร้อมเครื่องมือวิเคราะห์ระยะทาง พื้นที่ให้บริการ ความหนาแน่น และเส้นทาง ระบบศูนย์กลางเชื่อมโยงข้อมูลทำหน้าที่รับส่งและแลกเปลี่ยนข้อมูลระหว่างระบบ พร้อมตรวจสอบคุณภาพและจัดการ Metadata ส่วนระบบศูนย์วิเคราะห์ข้อมูลนำเสนอผลผ่านแดชบอร์ดทั้งแบบเรียลไทม์และย้อนหลัง"
+          }
+        ],
+        "features": [
+          {
+            "text": "ระบบจัดการข้อมูลและศูนย์ข้อมูลกลาง (Central Data Management Platform)"
+          },
+          {
+            "text": "ระบบสารสนเทศแผนที่และข้อมูลเชิงพื้นที่ (Spatial Information Platform)"
+          },
+          {
+            "text": "ระบบศูนย์กลางเชื่อมโยงข้อมูล (Data Integration Gateway)"
+          },
+          {
+            "text": "ระบบศูนย์วิเคราะห์ข้อมูล (Data Insight Center)"
+          },
+          {
+            "text": "รองรับ Shapefile, GeoJSON, KML, GeoTIFF และ ECW"
+          },
+          {
+            "text": "เผยแพร่ชุดข้อมูลเปิด พร้อม Data Anonymization และการเข้ารหัส"
+          }
+        ],
+        "custom": {
+          "coverage_area": "องค์การบริหารส่วนตำบลท่าตูม อำเภอศรีมหาโพธิ จังหวัดปราจีนบุรี"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      },
+      "en": {
+        "slug": "tha-tum-city-data-platform",
+        "title": "City Data Platform",
+        "summary": "A central city database with GIS mapping, a data exchange gateway and an analytics dashboard.",
+        "body": [
+          {
+            "type": "paragraph",
+            "text": "A procurement project for the city database underpinning smart-city development (City Data Platform) under the Smart Thatoom programme, comprising four systems on shared infrastructure."
+          },
+          {
+            "type": "paragraph",
+            "text": "The central data management platform consolidates sources into one place — general records, IoT device data and anything arriving over an API — handling both stream processing for real-time work and batch processing for historical analysis, on a microservices architecture that scales with demand."
+          },
+          {
+            "type": "paragraph",
+            "text": "The spatial information platform manages vector and raster layers with distance, service-area, density and network analysis. The data integration gateway moves and exchanges data between systems, validating quality and managing metadata along the way. The data insight centre presents the results through dashboards covering both live and historical views."
+          }
+        ],
+        "features": [
+          {
+            "text": "Central Data Management Platform"
+          },
+          {
+            "text": "Spatial Information Platform"
+          },
+          {
+            "text": "Data Integration Gateway"
+          },
+          {
+            "text": "Data Insight Center"
+          },
+          {
+            "text": "Shapefile, GeoJSON, KML, GeoTIFF and ECW support"
+          },
+          {
+            "text": "Open data publishing with anonymisation and encryption"
+          }
+        ],
+        "custom": {
+          "coverage_area": "Tha Tum Subdistrict Administrative Organisation, Si Maha Phot, Prachinburi"
+        },
+        "seoTitle": null,
+        "seoDescription": null,
+        "isPublished": true
+      }
+    }
   }
 ]
